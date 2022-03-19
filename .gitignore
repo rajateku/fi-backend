@@ -1,5 +1,6 @@
 ARCHIVE
 .idea/
+Data4
 .ipynb_checkpoints/
 __pycache__/
 config_fas.py
