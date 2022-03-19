@@ -5,3 +5,4 @@ Data4
 __pycache__/
 config_fas.py
 credentials.py
+logs

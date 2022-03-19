@@ -111,6 +111,21 @@ def hello():
     return jsonify(response)
 
 
+
+@app.route('/get_org_info', methods=['POST', 'GET'])
+def get_org_info():
+    req = request.get_json()
+    orgId = req["orgId"]
+    logger.info("=" * 80)
+    response = {
+                "orgId": orgId,
+                "name": "Roundpier",
+                "logo": "logo",
+                "topics" : ["topic1", "topic2"],
+                }
+    logger.info(response)
+    return jsonify(response)
+
 if __name__ == '__main__':
     # get_handles_from_company_name("uber eats")
     app.run(host="0.0.0.0", port=8000)
