@@ -1,0 +1,7 @@
+ARCHIVE
+Data4
+.idea/
+.ipynb_checkpoints/
+__pycache__/
+config_fas.py
+credentials.py
