@@ -79,14 +79,14 @@ def tweet_count_fn():
     return jsonify(response)
 
 
-@app.route('/test', methods=['GET'])
+@app.route('/', methods=['GET'])
 def test():
     logger.info("server working")
 
     return "server working"
 
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/all', methods=['POST', 'GET'])
 def hello():
     logger.info("=" * 80)
     query = request.args["brand"]
