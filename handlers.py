@@ -1,9 +1,9 @@
-import download_save_tweets_data
+# import download_save_tweets_data
 import download_save_playstore_data
 import download_save_appstore_data
 
 # import get_tweets_data_from_files
-# import get_google_playstore_data_from_files
+import get_google_playstore_data_from_files
 import get_apple_appstore_data_from_files
 
 import get_labels
@@ -45,6 +45,8 @@ def prepare_response_object_from_twitter_files(file_data, sectors):
 
 def prepare_response_object_from_playstore_files(file_data, sectors):
     response = []
+    labels = []
+
     for i, review in enumerate(file_data["data"]):
         REVIEW_OBJECT = {
             "id": "",
@@ -53,7 +55,7 @@ def prepare_response_object_from_playstore_files(file_data, sectors):
             "url": "",
             "labels": "",
             "sentiment": "",
-            "source": "Google Play Store"
+            "source": "playstore"
         }
 
         REVIEW_OBJECT["id"] = i
@@ -61,11 +63,16 @@ def prepare_response_object_from_playstore_files(file_data, sectors):
         REVIEW_OBJECT["location"] = ""
         REVIEW_OBJECT["created_at"] = review["at"]
         REVIEW_OBJECT["rating"] = review["score"]
-        REVIEW_OBJECT["labels"] = get_labels.given_sentence_to_lables(str(review["content"]), sectors)
+        REVIEW_OBJECT["labels"] = [get_labels.review_to_topic(str(review["content"]))]
+        # REVIEW_OBJECT["labels"] = get_labels.given_sentence_to_lables(str(review["content"]), sectors)
         # REVIEW_OBJECT["sentiment"] = get_sentiment.give_sentiment(str(review["content"]))
         REVIEW_OBJECT["url"] = "https://play.google.com/store/apps/details?id=" + PLAYSTORE_QUERY
         response.append(REVIEW_OBJECT)
-    return response
+        labels.extend(REVIEW_OBJECT["labels"])
+
+    labels_strip = prepare_labels_strip_navigation(labels)
+
+    return response, labels_strip
 
 
 def prepare_response_object_from_appstore_files(file_data, sectors, appstore_query):
@@ -78,21 +85,23 @@ def prepare_response_object_from_appstore_files(file_data, sectors, appstore_que
             REVIEW_OBJECT = {
                 "id": "",
                 "text": "",
+                "title": "",
                 "location": "",
                 "url": "",
                 "labels": "",
                 "sentiment": "",
                 "rating": "",
-                "source": "Apple App Store"
+                "source": "appstore"
             }
             REVIEW_OBJECT["id"] = i
+            REVIEW_OBJECT["title"] = review["title"]
             REVIEW_OBJECT["text"] = review["review"]
             REVIEW_OBJECT["location"] = ""
             REVIEW_OBJECT["created_at"] = review["date"]
             # REVIEW_OBJECT["labels"] = list(set(get_labels.given_sentence_to_lables(str(review["review"]), sectors)))
             REVIEW_OBJECT["labels"] = [get_labels.review_to_topic(str(review["review"]))]
             # REVIEW_OBJECT["sentiment"] , _ = get_sentiment.give_sentiment(str(review["review"]))
-            REVIEW_OBJECT["rating"] = str(review["rating"]) + " star"
+            REVIEW_OBJECT["rating"] = str(review["rating"])
             REVIEW_OBJECT["url"] = ""
             # REVIEW_OBJECT["labels"].append(str(review["rating"]) + " star")
             date_issue_count = [{"month" : "" , "issue": "" , "count": ""}]
@@ -103,12 +112,12 @@ def prepare_response_object_from_appstore_files(file_data, sectors, appstore_que
             #     date_count.append(review["date"][:7])
 
             # print(Counter(date_count))
+            labels.extend(REVIEW_OBJECT["labels"])
 
 
             response.append(REVIEW_OBJECT)
             # logger.info('REVIEW_OBJECT["labels"]')
             # logger.info(REVIEW_OBJECT["labels"])
-            labels.extend(REVIEW_OBJECT["labels"])
     # for date,count in Counter(date_count).items():
     #     print(date, count)
 
@@ -130,7 +139,7 @@ def prepare_labels_strip_navigation(labels):
 
     for count_label, value in count_labels.items():
         count_labels_strip.append(str(count_label) + "(" + str(value) + ")")
-    count_labels_strip.append("all")
+    # count_labels_strip.append("all")
     logger.info("count_labels_strip : " + str(count_labels_strip))
 
     return count_labels_strip
@@ -170,20 +179,23 @@ def handle_request(twitter_query, playstore_query, appstore_query, sectors=None)
     # print(twitter_reponse)
     #
     #
-    # reviews_response = get_google_playstore_data_from_files.get_data_from_csv_file(playstore_query)
-    # print("got reviews file data -playstore")
-    # playstore_reponse = prepare_response_object_from_playstore_files(reviews_response, sectors)
+    reviews_response = get_google_playstore_data_from_files.get_data_from_csv_file(playstore_query)
+    print("got reviews file data -playstore")
+    playstore_reponse, count_labels_playstore = prepare_response_object_from_playstore_files(reviews_response, sectors)
     # print(playstore_reponse)
 
     reviews_response = get_apple_appstore_data_from_files.get_data_from_csv_file(appstore_query)
     logger.info("APPSTORE - got reviews file data")
     # logger.info(reviews_response)
-    appstore_reponse, count_labels = prepare_response_object_from_appstore_files(reviews_response, sectors,
+    appstore_reponse, count_labels_appstore = prepare_response_object_from_appstore_files(reviews_response, sectors,
                                                                                  appstore_query)
 
     graph_data, graph_options = graphs.get_graph_data_from_response(appstore_reponse)
+    feedback_response = appstore_reponse + playstore_reponse
+    count_labels  =  count_labels_appstore + count_labels_playstore
+    feedback_response = sorted(feedback_response, key=lambda k: k.get('created_at', 0), reverse=True)
 
-    return appstore_reponse, count_labels, graph_data, graph_options
+    return feedback_response, count_labels, graph_data, graph_options
 
 
 if __name__ == '__main__':

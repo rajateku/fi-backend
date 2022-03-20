@@ -98,6 +98,8 @@ def test():
 def hello():
     logger.info("=" * 80)
     query = request.args["brand"]
+    orgId = request.get_json()
+    print(orgId)
 
     playstore_query, appstore_query, twitter_query, logo = get_handles_from_company_name(query)
     # playstore_query, appstore_query, twitter_query, logo = get_google_search_company_details.get_company_handles_from_query(query)
@@ -113,8 +115,8 @@ def hello():
                 "labels": count_labels,
                 "graphData" : graph_data,
                 "graphDataOptions" : graph_options}
-    print(graph_data)
-    print(graph_options)
+    # print(graph_data)
+    # print(graph_options)
 
     # logger.info(response)
 
