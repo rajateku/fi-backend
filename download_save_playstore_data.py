@@ -86,7 +86,7 @@ def scrape(query):
         lang='en',  # defaults to 'en'
         country='uk',  # defaults to 'us'
         sort=Sort.NEWEST,  # defaults to Sort.MOST_RELEVANT
-        count=100
+        count=500
     )
     print(len(uk_reviews))
     CSV_FILE = "Data4/{}.csv".format(query)

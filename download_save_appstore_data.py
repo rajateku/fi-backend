@@ -63,7 +63,7 @@ def scrape(appstore_query):
     tiktok = AppStore(country='us', app_name=query, app_id=id)
 
     # tiktok.review(how_many=10, after=datetime.datetime(2022, 2, 11))
-    tiktok.review(how_many=100)
+    tiktok.review(how_many=500)
 
     app_reviews = tiktok.reviews
     print(app_reviews)
