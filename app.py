@@ -105,6 +105,8 @@ def hello():
                 "labels": count_labels,
                 "graphData" : graph_data,
                 "graphDataOptions" : graph_options}
+    print(graph_data)
+    print(graph_options)
 
     # logger.info(response)
 
@@ -120,11 +122,159 @@ def get_org_info():
     response = {
                 "orgId": orgId,
                 "name": "Roundpier",
-                "logo": "logo",
+                "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyUeJ6gwm221GHEsezMN1sfx6YKxH29urVndKAwS-P9Snir2XVKCjv1O1qXtg&",
                 "topics" : ["topic1", "topic2"],
                 }
     logger.info(response)
     return jsonify(response)
+
+
+@app.route('/get_reviews_topics', methods=['POST', 'GET'])
+def get_reviews_topics():
+    req = request.get_json()
+    orgId = req["orgId"]
+    logger.info("=" * 80)
+    response = {
+                "orgId": orgId,
+                "name": "Roundpier",
+                "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyUeJ6gwm221GHEsezMN1sfx6YKxH29urVndKAwS-P9Snir2XVKCjv1O1qXtg&",
+                "reviews" : [{"review" : "review1","topics" : ["topic1", "topic2"], "created_at" : "2021-10-12 20:29:03"},
+                             {"review" : "review2","topics" : ["topic1", "topic3"], "created_at" : "2022-10-12 20:29:03"}],
+                }
+    logger.info(response)
+    return jsonify(response)
+
+@app.route('/get_plot_data', methods=['POST', 'GET'])
+def get_plot_data():
+    req = request.get_json()
+    orgId = req["orgId"]
+    logger.info("=" * 80)
+    graph_data =  {
+        "App Issues": [
+            {
+                "count": 2,
+                "month": "2018-07"
+            },
+            {
+                "count": 1,
+                "month": "2018-09"
+            },
+            {
+                "count": 1,
+                "month": "2019-05"
+            },
+            {
+                "count": 1,
+                "month": "2019-12"
+            },
+            {
+                "count": 1,
+                "month": "2020-03"
+            },
+            {
+                "count": 2,
+                "month": "2020-06"
+            },
+            {
+                "count": 1,
+                "month": "2020-07"
+            },
+            {
+                "count": 1,
+                "month": "2020-10"
+            },
+            {
+                "count": 1,
+                "month": "2021-01"
+            },
+            {
+                "count": 2,
+                "month": "2021-06"
+            }
+        ],
+        "Other Issues": [
+            {
+                "count": 2,
+                "month": "2018-07"
+            },
+            {
+                "count": 1,
+                "month": "2020-02"
+            },
+            {
+                "count": 1,
+                "month": "2020-06"
+            },
+            {
+                "count": 1,
+                "month": "2022-01"
+            }
+        ]
+    }
+    graph_data_options = [
+        {
+            "name": "App Issues"
+        },
+        {
+            "name": "Other Issues"
+        }
+    ]
+    response = {
+                "orgId": orgId,
+                "name": "Roundpier",
+                "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyUeJ6gwm221GHEsezMN1sfx6YKxH29urVndKAwS-P9Snir2XVKCjv1O1qXtg&",
+                "plot_data" : {"graphData" : graph_data, "graphDataOptions" : graph_data_options},
+                }
+    logger.info(response)
+    return jsonify(response)
+
+@app.route('/get_topics', methods=['POST', 'GET'])
+def get_topics():
+    req = request.get_json()
+    orgId = req["orgId"]
+    logger.info("=" * 80)
+
+    response = {
+                "orgId": orgId,
+                "name": "Roundpier",
+                "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyUeJ6gwm221GHEsezMN1sfx6YKxH29urVndKAwS-P9Snir2XVKCjv1O1qXtg&",
+                "topics" : ["topic1" , "topic2"],
+                }
+    logger.info(response)
+    return jsonify(response)
+
+@app.route('/add_topic', methods=['POST', 'GET'])
+def add_topic():
+    req = request.get_json()
+    orgId = req["orgId"]
+    topic = req["topic"]
+    logger.info("=" * 80)
+
+    response = {
+                "orgId": orgId,
+                "name": "Roundpier",
+                "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyUeJ6gwm221GHEsezMN1sfx6YKxH29urVndKAwS-P9Snir2XVKCjv1O1qXtg&",
+                "topics" : [topic, "topic1" , "topic2"],
+                }
+    logger.info(response)
+    return jsonify(response)
+
+@app.route('/remove_topic', methods=['POST', 'GET'])
+def remove_topic():
+    req = request.get_json()
+    orgId = req["orgId"]
+    topic = req["topic"]
+    logger.info("=" * 80)
+
+    response = {
+                "orgId": orgId,
+                "name": "Roundpier",
+                "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyUeJ6gwm221GHEsezMN1sfx6YKxH29urVndKAwS-P9Snir2XVKCjv1O1qXtg&",
+                "topics" : [ "topic2"],
+                }
+    logger.info(response)
+    return jsonify(response)
+
 
 if __name__ == '__main__':
     # get_handles_from_company_name("uber eats")
