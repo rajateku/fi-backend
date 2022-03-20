@@ -190,10 +190,11 @@ def handle_request(twitter_query, playstore_query, appstore_query, sectors=None)
     appstore_reponse, count_labels_appstore = prepare_response_object_from_appstore_files(reviews_response, sectors,
                                                                                  appstore_query)
 
-    graph_data, graph_options = graphs.get_graph_data_from_response(appstore_reponse)
     feedback_response = appstore_reponse + playstore_reponse
     count_labels  =  count_labels_appstore + count_labels_playstore
     feedback_response = sorted(feedback_response, key=lambda k: k.get('created_at', 0), reverse=True)
+    graph_data, graph_options = graphs.get_graph_data_from_response(feedback_response)
+
 
     return feedback_response, count_labels, graph_data, graph_options
 
