@@ -90,7 +90,7 @@ def tweet_count_fn():
 def test():
     logger.info("server working")
 
-    return "server working"
+    return "server working with git push"
 
 
 @app.route('/all', methods=['POST', 'GET'])
