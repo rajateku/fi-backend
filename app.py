@@ -1,4 +1,6 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS, cross_origin
+
 # import search_tweets
 # import sentiment_analysis
 # import get_hashtag_for_search
@@ -10,6 +12,10 @@ import get_google_search_company_details
 from logging_python import logger
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
+
 
 
 def get_handles_from_company_name(company_lower_case):
@@ -80,6 +86,7 @@ def tweet_count_fn():
 
 
 @app.route('/', methods=['GET'])
+@cross_origin()
 def test():
     logger.info("server working")
 
@@ -87,6 +94,7 @@ def test():
 
 
 @app.route('/all', methods=['POST', 'GET'])
+@cross_origin()
 def hello():
     logger.info("=" * 80)
     query = request.args["brand"]
@@ -115,6 +123,7 @@ def hello():
 
 
 @app.route('/get_org_info', methods=['POST', 'GET'])
+@cross_origin()
 def get_org_info():
     req = request.get_json()
     orgId = req["orgId"]
@@ -130,6 +139,7 @@ def get_org_info():
 
 
 @app.route('/get_reviews_topics', methods=['POST', 'GET'])
+@cross_origin()
 def get_reviews_topics():
     req = request.get_json()
     orgId = req["orgId"]
@@ -145,6 +155,7 @@ def get_reviews_topics():
     return jsonify(response)
 
 @app.route('/get_plot_data', methods=['POST', 'GET'])
+@cross_origin()
 def get_plot_data():
     req = request.get_json()
     orgId = req["orgId"]
@@ -229,6 +240,7 @@ def get_plot_data():
     return jsonify(response)
 
 @app.route('/get_topics', methods=['POST', 'GET'])
+@cross_origin()
 def get_topics():
     req = request.get_json()
     orgId = req["orgId"]
@@ -244,6 +256,7 @@ def get_topics():
     return jsonify(response)
 
 @app.route('/add_topic', methods=['POST', 'GET'])
+@cross_origin()
 def add_topic():
     req = request.get_json()
     orgId = req["orgId"]
@@ -260,6 +273,7 @@ def add_topic():
     return jsonify(response)
 
 @app.route('/remove_topic', methods=['POST', 'GET'])
+@cross_origin()
 def remove_topic():
     req = request.get_json()
     orgId = req["orgId"]

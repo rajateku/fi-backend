@@ -3,3 +3,5 @@ pandas
 google-play-scraper
 app-store-scraper
 requests-html
+flask-cors
+# pip install -U flask-cors
