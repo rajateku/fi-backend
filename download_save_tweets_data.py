@@ -20,7 +20,7 @@ LOCATION = "location"
 ID = "id"
 TEXT = "text"
 CREATED_AT = "created_at"
-TWEET_FIELDS = "tweet.fields=text,created_at,id&max_results=10&expansions=author_id&user.fields=created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld"
+TWEET_FIELDS = "tweet.fields=text,created_at,id&max_results=100&expansions=author_id&user.fields=created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld"
 
 
 def form_better_dataframes(search_tweets):
@@ -43,11 +43,11 @@ def save_file_to_local(query, search_result):
     df1 = form_better_dataframes(search_result.json())
     CSV_FILE = CSV_FOLDER + "{}.csv".format(query)
     print(df1)
-    df_all = pd.read_csv(CSV_FILE)
+    # df_all = pd.read_csv(CSV_FILE)
 
-    df_all = pd.concat([df1, df_all]).drop_duplicates(ignore_index=True)
-    df_final = df_all.drop_duplicates(subset=['id'])
-    df_final[[TEXT, ID, LOCATION, CREATED_AT]].to_csv(CSV_FILE, mode="w", index=False)
+    # df_all = pd.concat([df1, df_all]).drop_duplicates(ignore_index=True)
+    # df_final = df_all.drop_duplicates(subset=['id'])
+    df1[[TEXT, ID, LOCATION, CREATED_AT]].to_csv(CSV_FILE, mode="w", index=False)
 
     # data_overall_df = pd.read_csv(CSV_FILE, index_col=None)
     with open(CSV_FILE, "r") as f:

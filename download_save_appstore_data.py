@@ -62,11 +62,11 @@ def scrape(appstore_query):
     print("Scraping appstore reviews")
     tiktok = AppStore(country='us', app_name=query, app_id=id)
 
-    # tiktok.review(how_many=10, after=datetime.datetime(2022, 2, 11))
-    tiktok.review(how_many=500)
+    tiktok.review(how_many=500, after=datetime.datetime(2021, 1, 1))
+    # tiktok.review(how_many=1000)
 
     app_reviews = tiktok.reviews
-    print(app_reviews)
+    # print(app_reviews)
     print(len(app_reviews))
     CSV_FILE = "Data4/{}.csv".format(appstore_query)
     #

@@ -1,10 +1,11 @@
-# import download_save_tweets_data
+import download_save_tweets_data
 import download_save_playstore_data
 import download_save_appstore_data
 
-# import get_tweets_data_from_files
+import get_tweets_data_from_files
 import get_google_playstore_data_from_files
 import get_apple_appstore_data_from_files
+import get_trustpilot_data_from_files
 
 import get_labels
 import graphs
@@ -21,6 +22,7 @@ SECTORS = ["tech", "food", "delivery"]
 
 def prepare_response_object_from_twitter_files(file_data, sectors):
     response = []
+    labels = []
     for i, tweet in enumerate(file_data["data"]):
         REVIEW_OBJECT = {
             "id": "",
@@ -28,7 +30,9 @@ def prepare_response_object_from_twitter_files(file_data, sectors):
             "location": "",
             "url": "",
             "labels": "",
-            "sentiment": ""
+            "sentiment": "",
+            "highlightText": "",
+            "source" : "twitter"
 
         }
 
@@ -36,11 +40,20 @@ def prepare_response_object_from_twitter_files(file_data, sectors):
         REVIEW_OBJECT["text"] = tweet["text"]
         REVIEW_OBJECT["location"] = tweet["location"]
         REVIEW_OBJECT["created_at"] = tweet["created_at"]
-        REVIEW_OBJECT["labels"] = get_labels.given_sentence_to_lables(str(tweet["text"]), sectors)
+        REVIEW_OBJECT["rating"] = "0"
+        # REVIEW_OBJECT["labels"] = get_labels.given_sentence_to_lables(str(tweet["text"]), sectors)
+        REVIEW_OBJECT["labels"] = [get_labels.review_to_topic(str(tweet["text"]))]
+        REVIEW_OBJECT["highlightText"] = get_labels.review_to_highlight(str(tweet["text"]))
+        REVIEW_OBJECT["labels"].append("twitter")
+        print(REVIEW_OBJECT["labels"])
         # REVIEW_OBJECT["sentiment"] = get_sentiment.give_sentiment(str(tweet["text"]))
         REVIEW_OBJECT["url"] = "https://twitter.com/bradfordeurope/status/" + tweet["id"]
         response.append(REVIEW_OBJECT)
-    return response
+        labels.extend(REVIEW_OBJECT["labels"])
+
+    labels_strip = prepare_labels_strip_navigation(labels)
+
+    return response, labels_strip
 
 
 def prepare_response_object_from_playstore_files(file_data, sectors):
@@ -55,6 +68,7 @@ def prepare_response_object_from_playstore_files(file_data, sectors):
             "url": "",
             "labels": "",
             "sentiment": "",
+            "highlightText": "",
             "source": "playstore"
         }
 
@@ -64,6 +78,9 @@ def prepare_response_object_from_playstore_files(file_data, sectors):
         REVIEW_OBJECT["created_at"] = review["at"]
         REVIEW_OBJECT["rating"] = review["score"]
         REVIEW_OBJECT["labels"] = [get_labels.review_to_topic(str(review["content"]))]
+        REVIEW_OBJECT["highlightText"] = get_labels.review_to_highlight(str(review["content"]))
+        REVIEW_OBJECT["labels"].append("playstore")
+
         # REVIEW_OBJECT["labels"] = get_labels.given_sentence_to_lables(str(review["content"]), sectors)
         # REVIEW_OBJECT["sentiment"] = get_sentiment.give_sentiment(str(review["content"]))
         REVIEW_OBJECT["url"] = "https://play.google.com/store/apps/details?id=" + PLAYSTORE_QUERY
@@ -91,6 +108,7 @@ def prepare_response_object_from_appstore_files(file_data, sectors, appstore_que
                 "labels": "",
                 "sentiment": "",
                 "rating": "",
+                "highlightText" : "",
                 "source": "appstore"
             }
             REVIEW_OBJECT["id"] = i
@@ -100,7 +118,10 @@ def prepare_response_object_from_appstore_files(file_data, sectors, appstore_que
             REVIEW_OBJECT["created_at"] = review["date"]
             # REVIEW_OBJECT["labels"] = list(set(get_labels.given_sentence_to_lables(str(review["review"]), sectors)))
             REVIEW_OBJECT["labels"] = [get_labels.review_to_topic(str(review["review"]))]
-            # REVIEW_OBJECT["sentiment"] , _ = get_sentiment.give_sentiment(str(review["review"]))
+            REVIEW_OBJECT["highlightText"]= get_labels.review_to_highlight(str(review["review"]))
+            REVIEW_OBJECT["labels"].append("appstore")
+
+    # REVIEW_OBJECT["sentiment"] , _ = get_sentiment.give_sentiment(str(review["review"]))
             REVIEW_OBJECT["rating"] = str(review["rating"])
             REVIEW_OBJECT["url"] = ""
             # REVIEW_OBJECT["labels"].append(str(review["rating"]) + " star")
@@ -153,12 +174,17 @@ def check_if_file_exists(query):
         return False
 
 
-def handle_request(twitter_query, playstore_query, appstore_query, sectors=None):
-    flag = check_if_file_exists(twitter_query)
-    # if flag:
-    #     pass
-    # else:
-    #     download_save_tweets_data.search_and_save_twitter(twitter_query)
+def handle_request(twitter_query, playstore_query, appstore_query, trustpilot_query,  sectors=None):
+    if twitter_query=="":
+        pass
+    else:
+        flag = check_if_file_exists(twitter_query)
+        if flag:
+            pass
+        else:
+            download_save_tweets_data.search_and_save_twitter(twitter_query)
+
+
 
     flag = check_if_file_exists(playstore_query)
     if flag:
@@ -172,13 +198,16 @@ def handle_request(twitter_query, playstore_query, appstore_query, sectors=None)
     else:
         logger.info("APPSTORE - Downloading and saving file....")
         download_save_appstore_data.scrape(appstore_query)
+    if twitter_query=="":
+        twitter_reponse = []
+        count_labels_twitter = []
+    else:
+        tweets_response = get_tweets_data_from_files.get_data_from_csv_file(twitter_query)
+        print("got tweets file data - twitter")
+        twitter_reponse, count_labels_twitter = prepare_response_object_from_twitter_files(tweets_response, sectors)
+        print(twitter_reponse)
 
-    # tweets_response = get_tweets_data_from_files.get_data_from_csv_file(twitter_query)
-    # print("got tweets file data - twitter")
-    # twitter_reponse = prepare_response_object_from_twitter_files(tweets_response, sectors)
-    # print(twitter_reponse)
-    #
-    #
+
     reviews_response = get_google_playstore_data_from_files.get_data_from_csv_file(playstore_query)
     print("got reviews file data -playstore")
     playstore_reponse, count_labels_playstore = prepare_response_object_from_playstore_files(reviews_response, sectors)
@@ -186,17 +215,26 @@ def handle_request(twitter_query, playstore_query, appstore_query, sectors=None)
 
     reviews_response = get_apple_appstore_data_from_files.get_data_from_csv_file(appstore_query)
     logger.info("APPSTORE - got reviews file data")
-    # logger.info(reviews_response)
     appstore_reponse, count_labels_appstore = prepare_response_object_from_appstore_files(reviews_response, sectors,
                                                                                  appstore_query)
 
-    feedback_response = appstore_reponse + playstore_reponse
-    count_labels  =  count_labels_appstore + count_labels_playstore
+    logger.info("trustpilotquery")
+    logger.info(trustpilot_query)
+    if trustpilot_query == "-":
+        trustpilot_reponse = []
+    else:
+        trustpilot_reponse = get_trustpilot_data_from_files.get_data_from_json_files(trustpilot_query)
+
+    labels_sources = ["trustpilot" , "twitter" , "appstore" , "playstore"]
+    feedback_response = appstore_reponse + playstore_reponse + trustpilot_reponse
+    count_labels  =  labels_sources + count_labels_appstore + count_labels_twitter + count_labels_playstore
+    # count_labels  =  labels_sources
     feedback_response = sorted(feedback_response, key=lambda k: k.get('created_at', 0), reverse=True)
     graph_data, graph_options = graphs.get_graph_data_from_response(feedback_response)
 
 
-    return feedback_response, count_labels, graph_data, graph_options
+
+    return feedback_response + twitter_reponse + trustpilot_reponse , count_labels, graph_data, graph_options
 
 
 if __name__ == '__main__':

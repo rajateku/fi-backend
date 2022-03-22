@@ -86,9 +86,9 @@ def scrape(query):
         lang='en',  # defaults to 'en'
         country='uk',  # defaults to 'us'
         sort=Sort.NEWEST,  # defaults to Sort.MOST_RELEVANT
-        count=500
+        count=10000
     )
-    print(len(uk_reviews))
+    print(len(uk_reviews[0]))
     CSV_FILE = "Data4/{}.csv".format(query)
 
     df_busu = pd.DataFrame(np.array(uk_reviews[0]), columns=['review'])

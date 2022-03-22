@@ -30,22 +30,23 @@ def get_handles_from_company_name(company_lower_case):
         # appstore_name, appstore_id = str(row["Appstore"].values[0]).split("/id")
         appstore_query = row["Appstore"].values[0]
         twitter_query = str(row["Twitter"].values[0])
+        trustpilot_query = str(row["Trustpilot"].values[0])
         logo = str(row["logo_link"].values[0])
         logger.info(playstore_query + appstore_query + twitter_query + logo)
 
-        print(playstore_query, appstore_query, twitter_query, logo)
+        print(playstore_query, appstore_query, twitter_query,trustpilot_query, logo)
 
     else:
         logger.info("Name not in companies handles")
 
         print("Name not in companies handles")
 
-        playstore_query, appstore_query, twitter_query, logo = get_google_search_company_details.get_company_handles_from_query(
+        playstore_query, appstore_query, twitter_query,trustpilot_query, logo = get_google_search_company_details.get_company_handles_from_query(
             company_lower_case)
-        logger.info(playstore_query + appstore_query + twitter_query + logo)
+        logger.info(playstore_query + appstore_query + twitter_query + trustpilot_query +logo)
 
 
-    return playstore_query, appstore_query, twitter_query, logo
+    return playstore_query, appstore_query, twitter_query, trustpilot_query,  logo
 
 
 #
@@ -101,14 +102,14 @@ def hello():
     orgId = request.get_json()
     print(orgId)
 
-    playstore_query, appstore_query, twitter_query, logo = get_handles_from_company_name(query)
+    playstore_query, appstore_query, twitter_query,trustpilot_query, logo = get_handles_from_company_name(query)
     # playstore_query, appstore_query, twitter_query, logo = get_google_search_company_details.get_company_handles_from_query(query)
     # sectors = request.args["sectors"]
     # filter = request.args["filter"]
     sectors = ["food", "riding", "tech", "delivery", "features"]
     logger.info("query  :  " + str(appstore_query))
 
-    feedback_response, count_labels , graph_data, graph_options= handlers.handle_request(twitter_query, playstore_query, appstore_query, sectors)
+    feedback_response, count_labels , graph_data, graph_options= handlers.handle_request(twitter_query, playstore_query, appstore_query,trustpilot_query, sectors)
     response = {"feedback": feedback_response,
                 "logo": logo,
                 "handles": str(playstore_query + "," + appstore_query + "," + twitter_query + "," + logo),
@@ -293,5 +294,5 @@ def remove_topic():
 
 
 if __name__ == '__main__':
-    # get_handles_from_company_name("uber eats")
+    get_handles_from_company_name("deliveroo")
     app.run(host="0.0.0.0", port=8000)

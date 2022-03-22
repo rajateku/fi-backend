@@ -51,21 +51,29 @@ sectors = {
 #     return labels
 
 topics_kws_map = {
-"Remitly"  : ["remitly"],
-"Account Deactivated Issue"  : ["account deactivated" , "deactivated"],
-"Payment not received"  : ["payment"],
-"High exchange rate"  : ["rate", "exchange rate"],
-"Extra fees issue"  : ["extra fees", "unknown fees", "fees"],
-"Card transaction failed"  : ["card"],
-"Verification process issue"  : ["verification"],
-"Transfer not allowed"  : ["allowed"],
+# "Remitly"  : ["remitly"],
+# "Deactivation Issues"  : ["account deactivated" , "deactivated"],
+# "Payment issues"  : ["payment"],
+# "High exchange rate"  : ["rate", "exchange rate"],
+# "Extra fees issue"  : ["extra fees", "unknown fees", "fees"],
+# "Card issues"  : ["card"],
+# "Verification process issue"  : ["verification"],
+# "Transfer not allowed"  : ["allowed"],
 # "Money delayed issue"  : ["delayed"],
-"Late transfer issue"  : ["late", "delayed"],
+# "Late transfer issue"  : ["late", "delayed"],
 "App Issues"  : ["touch id", "app"],
-"Customer support issues"  : ["customer support", "customer service"],
-"other"  : []
+# "Customer service"  : ["customer support", "customer service"],
+# "other"  : []
 }
 
+def review_to_highlight(review):
+    sentences = review.split(". ")
+    if len(sentences)>1:
+        highlight =  sentences[1]
+    else:
+        highlight = sentences[0]
+
+    return highlight
 
 def review_to_topic(review):
     review = review.lower()

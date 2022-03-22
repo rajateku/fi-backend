@@ -112,7 +112,7 @@ def get_company_handles_from_query(company_searched):
     app_store_handle = app_store[0].split("/app")[-1].replace("/id", "_").replace("/", "")
     # print("Handles :", play_store_handle, app_store_handle, "" , logo)
 
-    return play_store_handle, app_store_handle, "", logo
+    return play_store_handle, app_store_handle, "", "-",  logo
 
 if __name__ == '__main__':
     c_list = ["Deliveroo" ]
