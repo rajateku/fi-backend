@@ -50,6 +50,8 @@ def prepare_response_object_from_appstore_files(file_data):
             REVIEW_OBJECT["labels"] = [get_labels.review_to_topic(str(review["content"]))]
             REVIEW_OBJECT["highlightText"] = get_labels.review_to_highlight(str(review["content"]))
             REVIEW_OBJECT["labels"].append("trustpilot")
+            REVIEW_OBJECT["labels"].append(str(review["rating"]))
+
             REVIEW_OBJECT["rating"] = str(review["rating"].split(" ")[1])
             REVIEW_OBJECT["url"] = ""
 

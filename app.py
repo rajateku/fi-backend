@@ -7,9 +7,12 @@ from flask_cors import CORS, cross_origin
 # import scrape_google_reviews
 # import count_tweets
 import handlers
+import handlers2
 import pandas as pd
+import json
 import get_google_search_company_details
 from logging_python import logger
+import read_write_db
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -35,6 +38,13 @@ def get_handles_from_company_name(company_lower_case):
         logger.info(playstore_query + appstore_query + twitter_query + logo)
 
         print(playstore_query, appstore_query, twitter_query,trustpilot_query, logo)
+        return {
+            'twitter': twitter_query,
+            'trustpilot': trustpilot_query,
+            'appstore': appstore_query,
+            'company_name': company_lower_case,
+            'playstore': playstore_query
+        }
 
     else:
         logger.info("Name not in companies handles")
@@ -116,10 +126,30 @@ def hello():
                 "labels": count_labels,
                 "graphData" : graph_data,
                 "graphDataOptions" : graph_options}
-    # print(graph_data)
-    # print(graph_options)
 
-    # logger.info(response)
+    return jsonify(response)
+
+
+@app.route('/all2', methods=['POST', 'GET'])
+@cross_origin()
+def all2():
+    logger.info("=" * 80)
+    query = request.args["brand"].lower()
+
+    # company_names_response = read_write_db.get_company_handles(TableName="company_handles", company_name = query )
+    company_names_response = get_handles_from_company_name(query)
+    print("company_names_response" , company_names_response)
+    if company_names_response == None:
+        response = {"feedback": [],
+                    "labels": [],
+                    "graphData": [],
+                    "graphDataOptions": []}
+    else:
+        feedback_response , labels_sources, graph_data, graph_options = handlers2.get_dashboard_data(query)
+        response = {"feedback": feedback_response,
+                    "labels": labels_sources,
+                    "graphData": graph_data,
+                    "graphDataOptions": graph_options}
 
     return jsonify(response)
 
@@ -245,32 +275,63 @@ def get_plot_data():
 @app.route('/get_topics', methods=['POST', 'GET'])
 @cross_origin()
 def get_topics():
+
+    response = read_write_db.get_all_data(TableName="topics")
+    print(response)
+    return jsonify(response)\
+
+@app.route('/get_bugs', methods=['POST', 'GET'])
+@cross_origin()
+def get_bugs():
+
+    query = request.args["brand"]
+
+    response = handlers2.handle_bugs(company=query.lower())
+    print(response)
+    return jsonify(response)
+
+
+@app.route('/add_company_integrations', methods=['POST', 'GET'])
+@cross_origin()
+def add_company_integrations():
     req = request.get_json()
-    orgId = req["orgId"]
+    company_name = req["company_name"]
+    playstore = req["playstore"]
+    appstore = req["appstore"]
+    twitter = req["twitter"]
+    trustpilot = req["trustpilot"]
+
+    req = get_handles_from_company_name(req["company_name"].lower())
+
+
+
+    print(req)
+
     logger.info("=" * 80)
 
+
+    handlers2.handle_company_onboard(req)
+
     response = {
-                "orgId": orgId,
-                "name": "Roundpier",
-                "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyUeJ6gwm221GHEsezMN1sfx6YKxH29urVndKAwS-P9Snir2XVKCjv1O1qXtg&",
-                "topics" : ["topic1" , "topic2"],
+                "company_name": company_name,
+                "playstore": playstore,
+                "appstore": appstore,
+                "twitter" : twitter,
+                "trustpilot" : trustpilot,
                 }
     logger.info(response)
     return jsonify(response)
 
-@app.route('/add_topic', methods=['POST', 'GET'])
+@app.route('/add_topics', methods=['POST', 'GET'])
 @cross_origin()
 def add_topic():
     req = request.get_json()
-    orgId = req["orgId"]
-    topic = req["topic"]
+
     logger.info("=" * 80)
+    handlers2.handle_topics(req)
 
     response = {
-                "orgId": orgId,
-                "name": "Roundpier",
-                "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyUeJ6gwm221GHEsezMN1sfx6YKxH29urVndKAwS-P9Snir2XVKCjv1O1qXtg&",
-                "topics" : [topic, "topic1" , "topic2"],
+                "topics": req,
                 }
     logger.info(response)
     return jsonify(response)
@@ -279,20 +340,21 @@ def add_topic():
 @cross_origin()
 def remove_topic():
     req = request.get_json()
-    orgId = req["orgId"]
+
     topic = req["topic"]
+    print(topic)
     logger.info("=" * 80)
+    handlers2.remove_topic(topic)
 
     response = {
-                "orgId": orgId,
-                "name": "Roundpier",
-                "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyUeJ6gwm221GHEsezMN1sfx6YKxH29urVndKAwS-P9Snir2XVKCjv1O1qXtg&",
-                "topics" : [ "topic2"],
+                "topic": "topic",
                 }
+
+
     logger.info(response)
     return jsonify(response)
 
 
 if __name__ == '__main__':
-    get_handles_from_company_name("deliveroo")
+    # get_handles_from_company_name("deliveroo")
     app.run(host="0.0.0.0", port=8000)

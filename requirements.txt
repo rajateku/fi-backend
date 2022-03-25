@@ -4,4 +4,5 @@ google-play-scraper
 app-store-scraper
 requests-html
 flask-cors
+boto3
 # pip install -U flask-cors

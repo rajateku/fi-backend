@@ -80,6 +80,7 @@ def prepare_response_object_from_playstore_files(file_data, sectors):
         REVIEW_OBJECT["labels"] = [get_labels.review_to_topic(str(review["content"]))]
         REVIEW_OBJECT["highlightText"] = get_labels.review_to_highlight(str(review["content"]))
         REVIEW_OBJECT["labels"].append("playstore")
+        REVIEW_OBJECT["labels"].append(str(review["score"]))
 
         # REVIEW_OBJECT["labels"] = get_labels.given_sentence_to_lables(str(review["content"]), sectors)
         # REVIEW_OBJECT["sentiment"] = get_sentiment.give_sentiment(str(review["content"]))
@@ -120,6 +121,7 @@ def prepare_response_object_from_appstore_files(file_data, sectors, appstore_que
             REVIEW_OBJECT["labels"] = [get_labels.review_to_topic(str(review["review"]))]
             REVIEW_OBJECT["highlightText"]= get_labels.review_to_highlight(str(review["review"]))
             REVIEW_OBJECT["labels"].append("appstore")
+            REVIEW_OBJECT["labels"].append( str(review["rating"]))
 
     # REVIEW_OBJECT["sentiment"] , _ = get_sentiment.give_sentiment(str(review["review"]))
             REVIEW_OBJECT["rating"] = str(review["rating"])
@@ -175,7 +177,10 @@ def check_if_file_exists(query):
 
 
 def handle_request(twitter_query, playstore_query, appstore_query, trustpilot_query,  sectors=None):
-    if twitter_query=="":
+    print("twitter_query")
+    print(twitter_query)
+    if twitter_query=="-":
+        print("passing")
         pass
     else:
         flag = check_if_file_exists(twitter_query)
@@ -198,7 +203,8 @@ def handle_request(twitter_query, playstore_query, appstore_query, trustpilot_qu
     else:
         logger.info("APPSTORE - Downloading and saving file....")
         download_save_appstore_data.scrape(appstore_query)
-    if twitter_query=="":
+
+    if twitter_query=="-":
         twitter_reponse = []
         count_labels_twitter = []
     else:
@@ -226,7 +232,7 @@ def handle_request(twitter_query, playstore_query, appstore_query, trustpilot_qu
         trustpilot_reponse = get_trustpilot_data_from_files.get_data_from_json_files(trustpilot_query)
 
     labels_sources = ["trustpilot" , "twitter" , "appstore" , "playstore"]
-    feedback_response = appstore_reponse + playstore_reponse + trustpilot_reponse
+    feedback_response = appstore_reponse + playstore_reponse
     count_labels  =  labels_sources + count_labels_appstore + count_labels_twitter + count_labels_playstore
     # count_labels  =  labels_sources
     feedback_response = sorted(feedback_response, key=lambda k: k.get('created_at', 0), reverse=True)

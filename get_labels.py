@@ -1,4 +1,6 @@
 import pandas as pd
+import nltk
+import read_write_db
 
 def get_phrases():
     df = pd.read_csv("Company Reviews - review_phrases.csv")
@@ -50,51 +52,71 @@ sectors = {
 #             labels.append(phrase)
 #     return labels
 
+
 topics_kws_map = {
-# "Remitly"  : ["remitly"],
-# "Deactivation Issues"  : ["account deactivated" , "deactivated"],
-# "Payment issues"  : ["payment"],
-# "High exchange rate"  : ["rate", "exchange rate"],
-# "Extra fees issue"  : ["extra fees", "unknown fees", "fees"],
-# "Card issues"  : ["card"],
-# "Verification process issue"  : ["verification"],
-# "Transfer not allowed"  : ["allowed"],
-# "Money delayed issue"  : ["delayed"],
-# "Late transfer issue"  : ["late", "delayed"],
+"Remitly"  : ["remitly"],
+"Deactivation Issues"  : ["account deactivated" , "deactivated"],
+"Payment issues"  : ["payment"],
+"High exchange rate"  : ["rate", "exchange rate"],
+"Extra fees issue"  : ["extra fees", "unknown fees", "fees"],
+"Card issues"  : ["card"],
+"Verification process issue"  : ["verification"],
+"Transfer not allowed"  : ["allowed"],
+"Money delayed issue"  : ["delayed"],
+"Late transfer issue"  : ["late", "delayed"],
 "App Issues"  : ["touch id", "app"],
-# "Customer service"  : ["customer support", "customer service"],
+"Customer service"  : ["customer support", "customer service"],
 # "other"  : []
 }
 
+
+list_neagtions_bug = [
+                        "bug", "not working" , "does not work", "not at all working", "Doesn't work", "does not",
+                        "crash", "never get notifications",
+                        "not able to",
+                        "can't" , "can’t", "cant", "couldn't" , "couldn’t" , "could not",  "cannot" ,
+                        "unable" , "Getting error",
+                        "don't", "will not",
+                        "slow"
+]
+
+bugs_1star = ["issues" , "disappears"]
+
 def review_to_highlight(review):
-    sentences = review.split(". ")
-    if len(sentences)>1:
-        highlight =  sentences[1]
-    else:
-        highlight = sentences[0]
+    # sentences = review.split(". ")
+    sentences = nltk.sent_tokenize(review)
+
+    for s in sentences:
+        for word in list_neagtions_bug:
+            if s.lower().__contains__(word.lower()):
+                # print(s, word)
+                highlight =  s
+                return highlight
+    highlight = ""
+    # if len(sentences)>1:
+    #     highlight =  sentences[1]
+    # else:
+    #     highlight = sentences[0]
 
     return highlight
 
+topics = read_write_db.get_all_data(TableName="topics")
+
 def review_to_topic(review):
+
     review = review.lower()
-    for topic,values in topics_kws_map.items():
-        for kw in values:
+    # for topic,values in topics_kws_map.items():
+    for topic in topics:
+        print(topic)
+        for kw in topic["words"].split(", "):
             if len(kw.split())>1:
                 if review.__contains__(kw):
-                    return topic
+                    return topic["topic"]
             else:
                 if kw in review.split():
-                    return topic
+                    return topic["topic"]
     return "Other Issues"
 
 
 if __name__ == '__main__':
-    sentences = [
-        "I have been using this app for 2 years and the past maybe 4-5 months the prices have increased exceptionally. There's also been a great amount of times I can't find a driver or/and I have waited for 30 min each time, until someone accepts my journey. A lot of drivers accept and after a couple minute...",
-        "I wanted to support local but on the second cancellation fee time trying the app I couldn't order a bolt because the app said no one was available and I must try again later. They then billed me for the trip (which as I said, never happened because no one was available) I went through a maze of trying to find out ho...",
-        ]
-
-    for s in sentences:
-        labels = given_sentence_to_lables(s, ["riding" , "tech"])
-        print(s, labels)
-
+    print("get labels")

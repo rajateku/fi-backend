@@ -1,0 +1,127 @@
+import read_write_db
+import download_save_appstore_data
+import download_save_playstore_data
+import download_save_trustpilot_db
+import get_playstore_data_db
+import get_appstore_data_db
+import get_trustpilot_data_db
+import graphs
+import time
+
+
+def scrape_all_4handles_data(company_name, playstore, appstore, twitter, trustpilot):
+    print("appstore", appstore)
+
+    TableNamePlayStore = "playstore_" + company_name.lower()
+    TableNameAppStore = "appstore_" + company_name.lower()
+    TableNameTrustpilot = "trustpilot_" + company_name.lower()
+
+
+    read_write_db.create_table(TableName=TableNamePlayStore, key="reviewId")
+    read_write_db.create_table(TableName=TableNameAppStore, key="date")
+    read_write_db.create_table(TableName=TableNameTrustpilot, key="created_at")
+
+    time.sleep(10)
+    download_save_playstore_data.scrape(query=playstore, table_name= TableNamePlayStore)
+    download_save_appstore_data.scrape(query=appstore, table_name= TableNameAppStore)
+    download_save_trustpilot_db.scrape(query=trustpilot, table_name= TableNameTrustpilot)
+
+
+def handle_company_onboard(req):
+    company_name = req["company_name"]
+    playstore = req["playstore"]
+    appstore = req["appstore"]
+    twitter = req["twitter"]
+    trustpilot = req["trustpilot"]
+    req["company_name"] = req["company_name"].lower()
+
+    read_write_db.create_table(TableName="company_handles", key=company_name)
+    read_write_db.create_review(TableName="company_handles", item=req)
+
+    scrape_all_4handles_data(company_name = company_name, playstore = playstore, appstore = appstore, twitter = twitter, trustpilot = trustpilot)
+    source_data_to_processed_table(company_name=company_name)
+
+
+def get_dashboard_data(company_name):
+    processedTableName = "processed_" + company_name.lower()
+
+    feedback_response  = read_write_db.get_all_data(TableName=processedTableName)
+    feedback_response = sorted(feedback_response, key=lambda k: k.get('created_at', 0), reverse=True)
+
+    graph_data, graph_options = graphs.get_graph_data_from_response(feedback_response)
+    labels_sources = ["trustpilot" , "twitter" , "appstore" , "playstore"]
+
+    return feedback_response , labels_sources, graph_data, graph_options
+
+
+def source_data_to_processed_table(company_name):
+    print("In source_data_to_processed_table")
+    TableNamePlayStore = "playstore_" + company_name.lower()
+    TableNameAppStore = "appstore_" + company_name.lower()
+    TableNameTrustpilot = "trustpilot_" + company_name.lower()
+
+    processedTableName = "processed_" + company_name.lower()
+    check = read_write_db.create_table(TableName=processedTableName, key="created_at" )
+
+    if check == "exists":
+        pass
+    else:
+        time.sleep(10)
+
+    if read_write_db.check_if_table_exists(TableNamePlayStore):
+        playstore_reponse, count_labels_playstore = get_playstore_data_db.get_data_from_db_processed(
+            TableName=TableNamePlayStore)
+        for review in playstore_reponse:
+            read_write_db.create_review(TableName= processedTableName, item=review)
+
+    if read_write_db.check_if_table_exists(TableNameAppStore):
+        appstore_reponse, count_labels_appstore = get_appstore_data_db.get_data_from_db_processed(
+            TableName=TableNameAppStore)
+        for review in appstore_reponse:
+            read_write_db.create_review(TableName= processedTableName, item=review)
+
+    if read_write_db.check_if_table_exists(TableNameTrustpilot):
+        trustpilot_reponse, count_labels_trustpilot = get_trustpilot_data_db.get_data_from_db_processed(
+            TableName=TableNameTrustpilot)
+        for review in trustpilot_reponse:
+            read_write_db.create_review(TableName= processedTableName, item=review)
+    print("source_data_to_processed_table finished")
+
+
+def handle_topics(req):
+    print("inside handle_topics")
+    read_write_db.create_table(TableName="topics", key="topic")
+    for topic in req:
+        read_write_db.create_review(TableName="topics", item=topic)
+    print("finished handle_topics")
+
+    company = "deliveroo"
+    source_data_to_processed_table(company)
+    print("source_data_to_processed_table Finished")
+
+
+def handle_bugs(company):
+    print("inside handle_bugs")
+    all_data = read_write_db.get_all_data(TableName="processed_" + company)
+    bugs_data = []
+    for review in all_data:
+        if review["highlightText"] =="":
+            pass
+        else:
+            bugs_data.append(review)
+    print("finished handle_bugs")
+
+    return bugs_data
+
+
+def remove_topic(topic):
+    print("inside handle_topics")
+    # for topic in req:
+    read_write_db.delete_item(TableName="topics", topic=topic)
+    print("finished handle_topics")
+
+
+if __name__ == '__main__':
+    company = "deliveroo"
+    source_data_to_processed_table(company)
+    get_dashboard_data(company)

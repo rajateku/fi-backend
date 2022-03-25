@@ -21,15 +21,22 @@ from bs4 import BeautifulSoup
 # Trustpilot review page
 basePage = 'http://www.trustpilot.com/review/'
 reviewSite = 'www.deliveroo.co.uk'
+# reviewSite = 'www.dropbox.com'
+# reviewSite = 'medium.com'
+# reviewSite = 'slack.com'
+# reviewSite = 'www.lyft.com'
+# reviewSite = 'github.com'
+# reviewSite = 'www.squarespace.com'
+
 reviewPage = basePage + reviewSite
 
 # Data file to save to
-datafile = 'dataSkype{}.csv'.format("_trustpilot")
+# datafile = 'dataSkype{}.csv'.format("_trustpilot")
 
 # Trustpilot default
 resultsPerPage = 20
 
-print('Scraper set for ' + reviewPage + ' - saving result to ' + datafile)
+# print('Scraper set for ' + reviewPage + ' - saving result to ' + datafile)
 
 ## Count amount of pages to scrape
 
@@ -59,12 +66,13 @@ print('Found total of ' + str(pages) + ' pages to scrape')
 
 ## Main scraping section
 
-with open(datafile, 'w', newline='', encoding='utf8') as csvfile:
-    # Tab delimited to allow for special characters
-    datawriter = csv.writer(csvfile, delimiter='\t')
-    print('Processing..')
-    all_reviews = []
-    for i in range(1, pages + 1):
+# with open(datafile, 'w', newline='', encoding='utf8') as csvfile:
+# Tab delimited to allow for special characters
+# datawriter = csv.writer(csvfile, delimiter='\t')
+print('Processing..')
+all_reviews = []
+for i in range(1, pages + 1):
+    try:
 
         # Sleep if throttle enabled
         if (throttle): time.sleep(1)
@@ -88,7 +96,7 @@ with open(datafile, 'w', newline='', encoding='utf8') as csvfile:
             # print(tag.find("div"))
             # print(tag.find('p').get_text())
             overallcontent = tag.find('div', {'class': 'styles_reviewContent__0Q2Tg'})
-            content = overallcontent.find('p').get_text()
+            content = overallcontent.find('p').get_text(separator="\n")
             title = overallcontent.find('h2').get_text()
             rating = tag.find('div', {'class': 'star-rating_starRating__4rrcf star-rating_medium__iN6Ty'}).find("img").get("alt")
             ts = tag.find('time').get("datetime")
@@ -103,43 +111,45 @@ with open(datafile, 'w', newline='', encoding='utf8') as csvfile:
             review["created_at"] =ts
             review["rating"] = rating
             all_reviews.append(review)
-        break
-    json_object = json.dumps(all_reviews, indent=4)
-    print(json_object)
-    dt = datetime.datetime.now()
-    with open("data_jsons/{}_{}.json".format(reviewSite, datetime.datetime.now()), "w") as outfile:
-        json.dump(all_reviews, outfile)
+    except:
+        pass
+    break
+json_object = json.dumps(all_reviews, indent=4)
+print(json_object)
+dt = datetime.datetime.now()
+with open("data_jsons/{}_{}.json".format(reviewSite, datetime.datetime.now()), "w") as outfile:
+    json.dump(all_reviews, outfile)
 
 
-            # print(tag.get_text(separator=" "))
-            # break
+        # print(tag.get_text(separator=" "))
         # break
+    # break
 
-        # for idx, elem in enumerate(script_bodies):
-        #
-        #     # print(idx, elem.text_content())
-        #     # print(idx, elem.items())
-        #     print(elem.xpath('//p[contains(@class, "typography_typography__QgicV")]//a')[0].text_content())
-        #     print(elem.xpath('//p').text_content())
-        #
-        #
-        #     print(elem.xpath('//time/@datetime')[0])
-        #     # print(elem.xpath('//p')[1].text_content())
-        #     # print(elem)
-        #     # curr_item = json.loads(elem.text_content())
-        #     #
-        #     # # Progress counting, outputs for every processed chunk
-        #     # reviewNumber = idx + 20 * (i - 1) + 1
-        #     # chunk = int(ratingCount / tot_chunks)
-        #     # if (reviewNumber % chunk == 0):
-        #     #     print('Processed ' + str(reviewNumber) + '/' + str(ratingCount) + ' ratings')
-        #     #
-        #     # title = curr_item["reviewHeader"]
-        #     # body = curr_item["reviewBody"]
-        #     # rating = curr_item["stars"]
-        #     # print([title, body, rating])
-        #     #
-        #     # datawriter.writerow([title, body, rating])
-        # break
+    # for idx, elem in enumerate(script_bodies):
+    #
+    #     # print(idx, elem.text_content())
+    #     # print(idx, elem.items())
+    #     print(elem.xpath('//p[contains(@class, "typography_typography__QgicV")]//a')[0].text_content())
+    #     print(elem.xpath('//p').text_content())
+    #
+    #
+    #     print(elem.xpath('//time/@datetime')[0])
+    #     # print(elem.xpath('//p')[1].text_content())
+    #     # print(elem)
+    #     # curr_item = json.loads(elem.text_content())
+    #     #
+    #     # # Progress counting, outputs for every processed chunk
+    #     # reviewNumber = idx + 20 * (i - 1) + 1
+    #     # chunk = int(ratingCount / tot_chunks)
+    #     # if (reviewNumber % chunk == 0):
+    #     #     print('Processed ' + str(reviewNumber) + '/' + str(ratingCount) + ' ratings')
+    #     #
+    #     # title = curr_item["reviewHeader"]
+    #     # body = curr_item["reviewBody"]
+    #     # rating = curr_item["stars"]
+    #     # print([title, body, rating])
+    #     #
+    #     # datawriter.writerow([title, body, rating])
+    # break
 
-    print('Processed ' + str(ratingCount) + '/' + str(ratingCount) + ' ratings.. Finished!')
+print('Processed ' + str(ratingCount) + '/' + str(ratingCount) + ' ratings.. Finished!')
