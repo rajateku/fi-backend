@@ -7,3 +7,5 @@ config_fas.py
 credentials.py
 logs-all
 logs
+data_jsons
+my-app

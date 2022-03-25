@@ -2,8 +2,8 @@
 
 import boto3
 
-client = boto3.client('dynamodb')
-dynamodb = boto3.resource('dynamodb')
+client = boto3.client('dynamodb' , region_name='us-east-1')
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
 
 TableName = 'company_handles'

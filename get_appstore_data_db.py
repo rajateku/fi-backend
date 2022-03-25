@@ -2,7 +2,7 @@ from logging_python import logger
 import boto3
 import get_labels
 from handlers import prepare_labels_strip_navigation
-dynamodb = boto3.resource('dynamodb')
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
 
 def prepare_response_object_from_appstore_files(file_data):

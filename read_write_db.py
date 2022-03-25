@@ -2,9 +2,9 @@ import boto3
 from boto3.dynamodb.conditions import Key
 
 
-client = boto3.client('dynamodb')
-dynamodb = boto3.resource('dynamodb')
-dynamodb_client = boto3.client('dynamodb')
+client = boto3.client('dynamodb' , region_name='us-east-1')
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+dynamodb_client = boto3.client('dynamodb', region_name='us-east-1')
 
 
 def check_if_table_exists(TableName):
