@@ -100,9 +100,9 @@ def review_to_highlight(review):
 
     return highlight
 
-topics = read_write_db.get_all_data(TableName="topics")
+# topics = read_write_db.get_all_data(TableName="topics")
 
-def review_to_topic(review):
+def review_to_topic(review, topics):
 
     review = review.lower()
     # for topic,values in topics_kws_map.items():

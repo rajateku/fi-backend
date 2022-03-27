@@ -63,6 +63,8 @@ def source_data_to_processed_table(company_name):
     processedTableName = "processed_" + company_name.lower()
     check = read_write_db.create_table(TableName=processedTableName, key="created_at" )
 
+    topics = read_write_db.get_all_data(TableName="topics")
+
     if check == "exists":
         pass
     else:
@@ -70,19 +72,19 @@ def source_data_to_processed_table(company_name):
 
     if read_write_db.check_if_table_exists(TableNamePlayStore):
         playstore_reponse, count_labels_playstore = get_playstore_data_db.get_data_from_db_processed(
-            TableName=TableNamePlayStore)
+            TableName=TableNamePlayStore, topics=topics)
         for review in playstore_reponse:
             read_write_db.create_review(TableName= processedTableName, item=review)
 
     if read_write_db.check_if_table_exists(TableNameAppStore):
         appstore_reponse, count_labels_appstore = get_appstore_data_db.get_data_from_db_processed(
-            TableName=TableNameAppStore)
+            TableName=TableNameAppStore, topics=topics)
         for review in appstore_reponse:
             read_write_db.create_review(TableName= processedTableName, item=review)
 
     if read_write_db.check_if_table_exists(TableNameTrustpilot):
         trustpilot_reponse, count_labels_trustpilot = get_trustpilot_data_db.get_data_from_db_processed(
-            TableName=TableNameTrustpilot)
+            TableName=TableNameTrustpilot, topics=topics)
         for review in trustpilot_reponse:
             read_write_db.create_review(TableName= processedTableName, item=review)
     print("source_data_to_processed_table finished")
@@ -95,7 +97,7 @@ def handle_topics(req):
         read_write_db.create_review(TableName="topics", item=topic)
     print("finished handle_topics")
 
-    company = "deliveroo"
+    company = "roundpier"
     source_data_to_processed_table(company)
     print("source_data_to_processed_table Finished")
 

@@ -6,7 +6,7 @@ dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
 
 
-def prepare_response_object_from_appstore_files(file_data):
+def prepare_response_object_from_appstore_files(file_data, topics):
     response = []
     labels = []
 
@@ -28,7 +28,7 @@ def prepare_response_object_from_appstore_files(file_data):
             REVIEW_OBJECT["title"] = review["title"]
             REVIEW_OBJECT["location"] = ""
             REVIEW_OBJECT["created_at"] = review["created_at"]
-            REVIEW_OBJECT["labels"] = [get_labels.review_to_topic(str(review["content"]))]
+            REVIEW_OBJECT["labels"] = [get_labels.review_to_topic(str(review["content"]), topics)]
             REVIEW_OBJECT["highlightText"] = get_labels.review_to_highlight(str(review["content"]))
             REVIEW_OBJECT["labels"].append("trustpilot")
             REVIEW_OBJECT["labels"].append(str(review["rating"]))
@@ -42,13 +42,13 @@ def prepare_response_object_from_appstore_files(file_data):
     return response, labels_strip
 
 
-def get_data_from_db_processed(TableName):
+def get_data_from_db_processed(TableName, topics):
 
     logger.info("connecting to db")
     table = dynamodb.Table(TableName)
     # response = table.scan(ProjectionExpression="review, rating")
     response = table.scan()
-    resp = prepare_response_object_from_appstore_files(response['Items'])
+    resp = prepare_response_object_from_appstore_files(response['Items'], topics)
     return resp
 
 

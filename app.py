@@ -43,7 +43,8 @@ def get_handles_from_company_name(company_lower_case):
             'trustpilot': trustpilot_query,
             'appstore': appstore_query,
             'company_name': company_lower_case,
-            'playstore': playstore_query
+            'playstore': playstore_query,
+            'logo' :logo
         }
 
     else:
@@ -291,6 +292,18 @@ def get_bugs():
     return jsonify(response)
 
 
+@app.route('/get_all_companies_in_db', methods=['POST', 'GET'])
+@cross_origin()
+def get_all_companies_in_db():
+
+    all = read_write_db.get_all_data(TableName="company_handles")
+    response = []
+    for c in all:
+        c["company_name"] =  c["company_name"].title()
+        response.append(c)
+
+    return jsonify(response)
+
 @app.route('/add_company_integrations', methods=['POST', 'GET'])
 @cross_origin()
 def add_company_integrations():
@@ -300,18 +313,10 @@ def add_company_integrations():
     appstore = req["appstore"]
     twitter = req["twitter"]
     trustpilot = req["trustpilot"]
-
     req = get_handles_from_company_name(req["company_name"].lower())
-
-
-
     print(req)
-
     logger.info("=" * 80)
-
-
     handlers2.handle_company_onboard(req)
-
     response = {
                 "company_name": company_name,
                 "playstore": playstore,
@@ -328,6 +333,7 @@ def add_topic():
     req = request.get_json()
 
     logger.info("=" * 80)
+    print("adding topic")
     handlers2.handle_topics(req)
 
     response = {
