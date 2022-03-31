@@ -3,7 +3,7 @@ import read_write_db
 # Python program to generate WordCloud
 
 # importing all necessary modules
-from wordcloud import WordCloud, STOPWORDS
+# from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
 import pandas as pd
 from graphs import get_mixed_graph_data_from_response, get_graph_data_from_response
@@ -121,19 +121,19 @@ def handle_bugs_watch_list(company):
 
 if __name__ == '__main__':
     company = "lyft"
-    comment_words = handle_bugs(company=company)
-    stopwords = set(STOPWORDS)
-
-    wordcloud = WordCloud(width=1200, height=800,
-                          background_color='white',
-                          stopwords=stopwords,
-                          min_font_size=10).generate(comment_words)
-
-    # plot the WordCloud image
-    plt.figure(figsize=(12, 8), facecolor=None)
-    plt.imshow(wordcloud)
-    plt.axis("off")
-    plt.tight_layout(pad=0)
-    plt.savefig("wordcloud.png")
+    # comment_words = handle_bugs(company=company)
+    # # stopwords = set(STOPWORDS)
+    #
+    # wordcloud = WordCloud(width=1200, height=800,
+    #                       background_color='white',
+    #                       stopwords=stopwords,
+    #                       min_font_size=10).generate(comment_words)
+    #
+    # # plot the WordCloud image
+    # plt.figure(figsize=(12, 8), facecolor=None)
+    # plt.imshow(wordcloud)
+    # plt.axis("off")
+    # plt.tight_layout(pad=0)
+    # plt.savefig("wordcloud.png")
 
     # plt.show()
