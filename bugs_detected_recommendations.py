@@ -4,10 +4,10 @@ import read_write_db
 
 # importing all necessary modules
 # from wordcloud import WordCloud, STOPWORDS
-import matplotlib.pyplot as plt
-import pandas as pd
+# import matplotlib.pyplot as plt
+# import pandas as pd
 from graphs import get_mixed_graph_data_from_response, get_graph_data_from_response
-import nltk
+# import nltk
 
 # from transformers import pipeline
 # candidate_labels = ["recommendation", "none"]
