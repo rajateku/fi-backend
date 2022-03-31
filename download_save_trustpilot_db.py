@@ -12,6 +12,9 @@ import read_write_db
 
 
 def scrape(query, table_name):
+    if str(query) == "-" or   str(query) == "nan":
+        print("No trustpilot")
+        return "No trustpilot"
 
     reviewPage = query
     resultsPerPage = 20

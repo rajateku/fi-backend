@@ -28,6 +28,7 @@ def prepare_response_object_from_playstore_files(file_data, topics):
         REVIEW_OBJECT["rating"] = str(review["score"])
         REVIEW_OBJECT["labels"] = [get_labels.review_to_topic(str(review["content"]), topics)]
         REVIEW_OBJECT["highlightText"] = get_labels.review_to_highlight(str(review["content"]))
+        REVIEW_OBJECT["suggestionText"] = get_labels.review_to_suggestion(str(review["content"]))
         REVIEW_OBJECT["labels"].append("playstore")
         REVIEW_OBJECT["labels"].append(str(review["score"]))
         response.append(REVIEW_OBJECT)

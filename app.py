@@ -8,6 +8,8 @@ from flask_cors import CORS, cross_origin
 # import count_tweets
 import handlers
 import handlers2
+import bugs_detected_recommendations
+from get_meta_data import get_playstore_meta_data
 import pandas as pd
 import json
 import get_google_search_company_details
@@ -150,7 +152,8 @@ def all2():
         response = {"feedback": feedback_response,
                     "labels": labels_sources,
                     "graphData": graph_data,
-                    "graphDataOptions": graph_options}
+                    "graphDataOptions": graph_options,
+                    }
 
     return jsonify(response)
 
@@ -287,7 +290,27 @@ def get_bugs():
 
     query = request.args["brand"]
 
-    response = handlers2.handle_bugs(company=query.lower())
+    response = bugs_detected_recommendations.handle_bugs(company=query.lower())
+    print(response)
+    return jsonify(response)\
+
+@app.route('/get_mix_graphs_data', methods=['POST', 'GET'])
+@cross_origin()
+def get_mix_graphs_data():
+
+    query = request.args["brand"]
+
+    response = bugs_detected_recommendations.handle_bugs_watch_list(company=query.lower())
+    print(response)
+    return jsonify(response)
+
+@app.route('/get_recommendations', methods=['POST', 'GET'])
+@cross_origin()
+def get_suggestions():
+
+    query = request.args["brand"]
+
+    response = bugs_detected_recommendations.handle_suggestions(company=query.lower())
     print(response)
     return jsonify(response)
 
@@ -359,6 +382,28 @@ def remove_topic():
 
     logger.info(response)
     return jsonify(response)
+
+
+@app.route('/get_meta_data', methods=['POST', 'GET'])
+@cross_origin()
+def get_meta_data():
+    req = request.get_json()
+
+    query = request.args["brand"]
+
+    response = get_playstore_meta_data("ksk")
+    print(response)
+    return jsonify(response)
+import jwt_auth
+@app.route('/login', methods=['POST', 'GET'])
+@cross_origin()
+def login():
+    req = request.get_json()
+
+    response = jwt_auth.check_login(req)
+    print(response)
+    return jsonify(response)
+
 
 
 if __name__ == '__main__':

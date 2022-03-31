@@ -80,7 +80,22 @@ list_neagtions_bug = [
                         "slow"
 ]
 
+list_suggestions = ["suggest", "please add" , "would like to see" , "would like to" ,  ]
+
 bugs_1star = ["issues" , "disappears"]
+
+def review_to_suggestion(review):
+    # sentences = review.split(". ")
+    sentences = nltk.sent_tokenize(review)
+
+    for s in sentences:
+        for word in list_suggestions:
+            if s.lower().__contains__(word.lower()):
+                highlight =  s
+                return highlight
+    highlight = ""
+    return highlight
+
 
 def review_to_highlight(review):
     # sentences = review.split(". ")

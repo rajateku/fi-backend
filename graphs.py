@@ -1,6 +1,56 @@
 from collections import Counter
 from logging_python import logger
 
+
+def get_mixed_graph_data_from_response(response):
+    pdata = []
+    graph_options = []
+    month_based = {}
+
+
+    for review in response:
+        month =review["created_at"][:7]
+        label = review["labels"][0]
+        month_based.setdefault(month, []).append(label)
+
+
+    print("month_based")
+    print(month_based)
+    final_topic_based_dates_count = {}
+    for month, labels in month_based.items():
+        # months = sorted(months)
+        k = Counter(labels)
+        print(k)
+        month_based = []
+        k = dict(k)
+        k["month"] = month
+        pdata.append(k)
+        graph_options.extend(set(labels))
+
+        # for date, count in k.items():
+        #     topic_dates_count = {}
+        #     # print(date, count)
+        #     topic_dates_count["month"] = date
+        #     topic_dates_count["count"] = count
+        #     # print("topic_dates_count :" , topic_dates_count)
+        #     try:
+        #         final_topic_based_dates_count[topic].append(topic_dates_count)
+        #     except KeyError:
+        #         final_topic_based_dates_count[topic] = [topic_dates_count]
+        # break
+    # graph_options = []
+    # for k in final_topic_based_dates_count:
+    #     graph_options.append({"name": k})
+    # logger.info("graph_options")
+    # logger.info(graph_options)
+    graph_options = list(set(graph_options))
+    print("pdata")
+    print(pdata)
+    print(graph_options)
+    response = {"pdata" : pdata, "mixed_graph_options" : graph_options }
+    return  response
+
+
 def get_graph_data_from_response(response):
     topic_based = {}
 

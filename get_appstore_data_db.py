@@ -29,6 +29,7 @@ def prepare_response_object_from_appstore_files(file_data, topics):
             REVIEW_OBJECT["created_at"] = review["date"]
             REVIEW_OBJECT["labels"] = [get_labels.review_to_topic(str(review["review"]), topics)]
             REVIEW_OBJECT["highlightText"]= get_labels.review_to_highlight(str(review["review"]))
+            REVIEW_OBJECT["suggestionText"] = get_labels.review_to_suggestion(str(review["review"]))
             REVIEW_OBJECT["labels"].append("appstore")
             REVIEW_OBJECT["labels"].append( str(review["rating"]))
             REVIEW_OBJECT["rating"] = str(review["rating"])

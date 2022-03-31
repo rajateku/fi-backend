@@ -111,6 +111,8 @@ def handle_bugs(company):
             pass
         else:
             bugs_data.append(review)
+    bugs_data = sorted(bugs_data, key=lambda k: k.get('created_at', 0), reverse=True)
+
     print("finished handle_bugs")
 
     return bugs_data
@@ -124,6 +126,13 @@ def remove_topic(topic):
 
 
 if __name__ == '__main__':
-    company = "deliveroo"
-    source_data_to_processed_table(company)
-    get_dashboard_data(company)
+
+    company = "roundpier"
+
+
+    # companies = [ "nhs" , "lyft" , "monzo" ,]
+    companies = [ "nhs" , "lyft" , "monzo" , "roundpier" ,  "transferwise" , "walmart" , "slack" , "dropbox" , "mediumcorporation" ]
+
+    for company in companies:
+        source_data_to_processed_table(company)
+        # get_dashboard_data(company)

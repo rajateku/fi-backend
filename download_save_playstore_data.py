@@ -74,7 +74,7 @@ def scrape(query, table_name):
         lang='en',  # defaults to 'en'
         country='uk',  # defaults to 'us'
         sort=Sort.NEWEST,  # defaults to Sort.MOST_RELEVANT
-        count=10
+        count=100
     )
     print(len(uk_reviews[0]))
     for review in uk_reviews[0]:
