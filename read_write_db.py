@@ -48,9 +48,11 @@ def create_table(TableName,key):
 
 
 def create_review(TableName, item):
+    print("inside create review")
     table = dynamodb.Table(TableName)
     print(item)
     table.put_item(Item=item)
+    print("item created")
 
     return "item created"
 
@@ -87,4 +89,6 @@ def get_all_data(TableName):
 
 
 if __name__ == '__main__':
-    get_company_handles(TableName="company_handles", company_name = "dd" )
+    # get_company_handles(TableName="company_handles", company_name = "dd" )
+    items = get_all_data(TableName="userFootPrints")
+    print(items)

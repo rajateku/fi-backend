@@ -102,6 +102,7 @@ def tweet_count_fn():
 @app.route('/', methods=['GET'])
 @cross_origin()
 def test():
+
     logger.info("server working")
 
     return "server working with git push"
@@ -403,6 +404,19 @@ def login():
     response = jwt_auth.check_login(req)
     print(response)
     return jsonify(response)
+
+from datetime import datetime
+
+@app.route('/user_foot_print', methods=['POST', 'GET'])
+@cross_origin()
+def user_foot_print():
+    req = request.get_json()
+    item = {}
+    item["data"] = str(req)
+    item["ts"] = str(datetime.now())
+    read_write_db.create_review(TableName="userFootPrints", item=item)
+    print(req)
+    return jsonify(req)
 
 
 
