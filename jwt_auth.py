@@ -25,11 +25,14 @@ decoded = jwt.decode(encoded, key, algorithms="HS256")
 print(decoded)
 
 
-def read_active_jwts(jwt):
+def read_active_jwts(jwt_encoded):
     all_jwts = read_write_db.get_all_data(TableName="activeJWTs")
     for jwts in all_jwts:
-        if jwt == jwts["jwt"]:
-            return "JWT exists"
+        if jwt_encoded == jwts["jwt"]:
+
+            print(jwt.decode(jwt_encoded, "secret", algorithms="HS256"))
+            return jwt.decode(jwt_encoded, "secret", algorithms="HS256")
+            # return "JWT exists"
     return "No active jwt"
 
 def check_login(req):

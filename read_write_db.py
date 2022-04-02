@@ -91,4 +91,6 @@ def get_all_data(TableName):
 if __name__ == '__main__':
     # get_company_handles(TableName="company_handles", company_name = "dd" )
     items = get_all_data(TableName="userFootPrints")
-    print(items)
+    # print(items)
+    for item in items:
+        print(item)

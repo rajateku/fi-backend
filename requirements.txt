@@ -6,5 +6,6 @@ requests-html
 flask-cors
 boto3
 nltk
-PyJWT
+# PyJWT
+PyJWT==v1.7.1
 # pip install -U flask-cors

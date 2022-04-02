@@ -140,6 +140,38 @@ def all2():
     logger.info("=" * 80)
     query = request.args["brand"].lower()
 
+    jwt = request.headers.get('jwt')
+    jwt_creds = jwt_auth.read_active_jwts(jwt)
+    print(jwt_creds["username"])
+    query = (jwt_creds["username"])
+
+    # company_names_response = read_write_db.get_company_handles(TableName="company_handles", company_name = query )
+    company_names_response = get_handles_from_company_name(query)
+    print("company_names_response" , company_names_response)
+    if company_names_response == None:
+        response = {"feedback": [],
+                    "labels": [],
+                    "graphData": [],
+                    "graphDataOptions": []}
+    else:
+        feedback_response , labels_sources, graph_data, graph_options = handlers2.get_dashboard_data(query)
+        response = {"feedback": feedback_response,
+                    "labels": labels_sources,
+                    "graphData": graph_data,
+                    "graphDataOptions": graph_options,
+                    }
+
+    return jsonify(response)
+
+@app.route('/dashboard', methods=['POST', 'GET'])
+@cross_origin()
+def dashboard():
+    logger.info("=" * 80)
+    jwt = request.headers.get('jwt')
+    jwt_creds = jwt_auth.read_active_jwts(jwt)
+    print(jwt_creds["username"])
+    query = (jwt_creds["username"])
+
     # company_names_response = read_write_db.get_company_handles(TableName="company_handles", company_name = query )
     company_names_response = get_handles_from_company_name(query)
     print("company_names_response" , company_names_response)
@@ -417,6 +449,50 @@ def user_foot_print():
     read_write_db.create_review(TableName="userFootPrints", item=item)
     print(req)
     return jsonify(req)
+
+from collections import Counter
+# import nltk
+# from nltk.corpus import stopwords
+# nltk.download('stopwords')
+# from nltk.tokenize import word_tokenize
+
+@app.route('/get_word_cloud', methods=['POST', 'GET'])
+@cross_origin()
+def get_word_cloud():
+    req = request.get_json()
+    # query = "Roundpier"
+    query = request.args["brand"].lower()
+
+
+    feedback_response, labels_sources, graph_data, graph_options = handlers2.get_dashboard_data(query)
+    all_feedbacks = []
+    response = []
+
+
+    # print(tokens_without_sw)
+
+    for feed in feedback_response:
+        # text = "Nick likes to play football, however he is not too fond of tennis."
+        # text_tokens = word_tokenize(feed["text"].lower())
+
+        # tokens_without_sw = [word for word in text_tokens if not word in stopwords.words()]
+        all_feedbacks.extend(feed["text"].lower().split(" "))
+        # all_feedbacks.extend(tokens_without_sw)
+    # all_feedbacks = all_feedbacks.remove(",")
+    # all_feedbacks = all_feedbacks.remove("-")
+    # all_feedbacks = all_feedbacks.remove(")")
+    # all_feedbacks = all_feedbacks.remove("(")
+
+    remove = ["," , ")" , "-" , "." , "’" , "(" , "to" , "the" ,"in" , "and" , "this" , "it" , "but" , "a" , "for" , "is" , "was" , "my" , "i", "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these", "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while", "of", "at", "by", "for", "with", "about", "against", "between", "into", "through", "during", "before", "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should", "now"]
+    for k, v in Counter(all_feedbacks).items():
+        if k not in remove and v>1:
+            response.append({"value" : k , "count" :v })
+            # response.append({"text" : k , "value" :v })
+
+
+    # res = str(all_feedbacks)
+    print(response)
+    return jsonify(response)
 
 
 
