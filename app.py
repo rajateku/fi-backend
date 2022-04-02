@@ -169,6 +169,7 @@ def dashboard():
     logger.info("=" * 80)
     jwt = request.headers.get('jwt')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
+    print(jwt_creds)
     print(jwt_creds["username"])
     query = (jwt_creds["username"])
 
