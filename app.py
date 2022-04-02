@@ -167,7 +167,7 @@ def all2():
 @cross_origin()
 def dashboard():
     logger.info("=" * 80)
-    jwt = request.headers.get('jwt')
+    jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
     logger.info(jwt_creds)
     print(jwt_creds)
@@ -317,7 +317,7 @@ def get_topics():
 
     response = read_write_db.get_all_data(TableName="topics")
     print(response)
-    return jsonify(response)\
+    return jsonify(response)
 
 @app.route('/get_bugs', methods=['POST', 'GET'])
 @cross_origin()
