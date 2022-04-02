@@ -327,7 +327,53 @@ def get_bugs():
 
     response = bugs_detected_recommendations.handle_bugs(company=query.lower())
     print(response)
-    return jsonify(response)\
+    return jsonify(response)
+
+@app.route('/bugs', methods=['POST', 'GET'])
+@cross_origin()
+def bugs():
+    jwt = request.headers.get('Authorization')
+    jwt_creds = jwt_auth.read_active_jwts(jwt)
+    logger.info(jwt_creds)
+    print(jwt_creds)
+    print(jwt_creds["username"])
+    query = (jwt_creds["username"])
+    response = bugs_detected_recommendations.handle_bugs(company=query.lower())
+    print(response)
+    return jsonify(response)
+
+@app.route('/recommendations', methods=['POST', 'GET'])
+@cross_origin()
+def recommendations():
+
+    jwt = request.headers.get('Authorization')
+    jwt_creds = jwt_auth.read_active_jwts(jwt)
+    logger.info(jwt_creds)
+    print(jwt_creds)
+    print(jwt_creds["username"])
+    query = (jwt_creds["username"])
+
+    response = bugs_detected_recommendations.handle_suggestions(company=query.lower())
+    print(response)
+    return jsonify(response)
+
+
+@app.route('/graphs', methods=['POST', 'GET'])
+@cross_origin()
+def graphs():
+
+    jwt = request.headers.get('Authorization')
+    jwt_creds = jwt_auth.read_active_jwts(jwt)
+    logger.info(jwt_creds)
+    print(jwt_creds)
+    print(jwt_creds["username"])
+    query = (jwt_creds["username"])
+
+    response = bugs_detected_recommendations.handle_bugs_watch_list(company=query.lower())
+    print(response)
+    return jsonify(response)
+
+
 
 @app.route('/get_mix_graphs_data', methods=['POST', 'GET'])
 @cross_origin()
@@ -429,6 +475,7 @@ def get_meta_data():
     response = get_playstore_meta_data("ksk")
     print(response)
     return jsonify(response)
+
 import jwt_auth
 @app.route('/login', methods=['POST', 'GET'])
 @cross_origin()
