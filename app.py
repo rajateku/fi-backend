@@ -140,10 +140,10 @@ def all2():
     logger.info("=" * 80)
     query = request.args["brand"].lower()
 
-    jwt = request.headers.get('jwt')
-    jwt_creds = jwt_auth.read_active_jwts(jwt)
-    print(jwt_creds["username"])
-    query = (jwt_creds["username"])
+    # jwt = request.headers.get('jwt')
+    # jwt_creds = jwt_auth.read_active_jwts(jwt)
+    # print(jwt_creds["username"])
+    # query = (jwt_creds["username"])
 
     # company_names_response = read_write_db.get_company_handles(TableName="company_handles", company_name = query )
     company_names_response = get_handles_from_company_name(query)
