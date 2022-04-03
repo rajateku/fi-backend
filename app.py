@@ -435,6 +435,19 @@ def get_topics():
     print(response)
     return jsonify(response)
 
+@app.route('/getTopics', methods=['POST', 'GET'])
+@cross_origin()
+def getTopics():
+    jwt = request.headers.get('Authorization')
+    jwt_creds = jwt_auth.read_active_jwts(jwt)
+    logger.info(jwt_creds)
+    print(jwt_creds["username"])
+    query = (jwt_creds["username"])
+    table_name = "topics_" + query.lower()
+
+    response = read_write_db.get_all_data(TableName=table_name)
+    print(response)
+    return jsonify(response)
 
 @app.route('/add_topics', methods=['POST', 'GET'])
 @cross_origin()
@@ -453,11 +466,58 @@ def add_topic():
     logger.info(response)
     return jsonify(response)
 
+
+@app.route('/addTopic', methods=['POST', 'GET'])
+@cross_origin()
+def addTopic():
+    req = request.get_json()
+    jwt = request.headers.get('Authorization')
+    jwt_creds = jwt_auth.read_active_jwts(jwt)
+    logger.info(jwt_creds)
+    print(jwt_creds["username"])
+    query = (jwt_creds["username"])
+    table_name = "topics_" + query.lower()
+    table_name = "topics_" + query.lower()
+
+    logger.info("=" * 80)
+    print("adding topic")
+    handlers2.handle_topics(req, table_name)
+
+    response = {
+                "topics": req,
+                }
+    logger.info(response)
+    return jsonify(response)
+
 @app.route('/remove_topic', methods=['POST', 'GET'])
 @cross_origin()
 def remove_topic():
     req = request.get_json()
     query = request.args["brand"]
+    table_name = "topics_" + query.lower()
+
+    topic = req["topic"]
+    print(topic)
+    logger.info("=" * 80)
+    handlers2.remove_topic(topic, table_name)
+
+    response = {
+                "topic": "topic",
+                }
+
+
+    logger.info(response)
+    return jsonify(response)
+
+@app.route('/removeTopic', methods=['POST', 'GET'])
+@cross_origin()
+def removeTopic():
+    req = request.get_json()
+    jwt = request.headers.get('Authorization')
+    jwt_creds = jwt_auth.read_active_jwts(jwt)
+    logger.info(jwt_creds)
+    print(jwt_creds["username"])
+    query = (jwt_creds["username"])
     table_name = "topics_" + query.lower()
 
     topic = req["topic"]
