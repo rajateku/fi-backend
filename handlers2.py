@@ -15,11 +15,13 @@ def scrape_all_4handles_data(company_name, playstore, appstore, twitter, trustpi
     TableNamePlayStore = "playstore_" + company_name.lower()
     TableNameAppStore = "appstore_" + company_name.lower()
     TableNameTrustpilot = "trustpilot_" + company_name.lower()
+    TableNameTopics = "topics_" + company_name.lower()
 
 
     read_write_db.create_table(TableName=TableNamePlayStore, key="reviewId")
     read_write_db.create_table(TableName=TableNameAppStore, key="date")
     read_write_db.create_table(TableName=TableNameTrustpilot, key="created_at")
+    read_write_db.create_table(TableName=TableNameTopics, key="topic")
 
     time.sleep(10)
     download_save_playstore_data.scrape(query=playstore, table_name= TableNamePlayStore)
@@ -49,7 +51,9 @@ def get_dashboard_data(company_name):
     feedback_response = sorted(feedback_response, key=lambda k: k.get('created_at', 0), reverse=True)
 
     graph_data, graph_options = graphs.get_graph_data_from_response(feedback_response)
-    labels_sources = ["trustpilot" , "twitter" , "appstore" , "playstore"]
+    labels_sources = [ "Twitter" , "App Store" , "Play Store"]
+    topic_labels_dashboard = read_write_db.get_all_data(TableName="topics_" + company_name.lower())
+    labels_sources =  labels_sources + [a ["topic"] for a in topic_labels_dashboard]
 
     return feedback_response , labels_sources, graph_data, graph_options
 
@@ -90,16 +94,16 @@ def source_data_to_processed_table(company_name):
     print("source_data_to_processed_table finished")
 
 
-def handle_topics(req):
+def handle_topics(req, table_name):
     print("inside handle_topics")
-    read_write_db.create_table(TableName="topics", key="topic")
+    read_write_db.create_table(TableName=table_name, key="topic")
     for topic in req:
-        read_write_db.create_review(TableName="topics", item=topic)
+        read_write_db.create_review(TableName=table_name, item=topic)
     print("finished handle_topics")
 
-    company = "roundpier"
-    source_data_to_processed_table(company)
-    print("source_data_to_processed_table Finished")
+    # company = "roundpier"
+    # source_data_to_processed_table(company)
+    # print("source_data_to_processed_table Finished")
 
 
 def handle_bugs(company):
@@ -118,10 +122,10 @@ def handle_bugs(company):
     return bugs_data
 
 
-def remove_topic(topic):
+def remove_topic(topic, table_name):
     print("inside handle_topics")
     # for topic in req:
-    read_write_db.delete_item(TableName="topics", topic=topic)
+    read_write_db.delete_item(TableName=table_name, topic=topic)
     print("finished handle_topics")
 
 

@@ -89,8 +89,13 @@ def get_all_data(TableName):
 
 
 if __name__ == '__main__':
-    # get_company_handles(TableName="company_handles", company_name = "dd" )
-    items = get_all_data(TableName="userFootPrints")
-    # print(items)
-    for item in items:
-        print(item)
+    # # get_company_handles(TableName="company_handles", company_name = "dd" )
+#     # items = get_all_data(TableName="userFootPrints")
+#     # # print(items)
+#     # for item in items:
+#     #     print(item)
+    companies = ["NHS", "Roundpier","Thursday",  "Transferwise", "Monzo", "Lyft", "Slack", "Dropbox", "Walmart", "Mediumcorporation"  ]
+    # companies = [ "Mediumcorporation"  ]
+    for c in companies:
+
+        create_table(TableName= "topics_" + c.lower() , key="topic")

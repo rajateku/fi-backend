@@ -311,13 +311,7 @@ def get_plot_data():
     logger.info(response)
     return jsonify(response)
 
-@app.route('/get_topics', methods=['POST', 'GET'])
-@cross_origin()
-def get_topics():
 
-    response = read_write_db.get_all_data(TableName="topics")
-    print(response)
-    return jsonify(response)
 
 @app.route('/get_bugs', methods=['POST', 'GET'])
 @cross_origin()
@@ -431,14 +425,27 @@ def add_company_integrations():
     logger.info(response)
     return jsonify(response)
 
+@app.route('/get_topics', methods=['POST', 'GET'])
+@cross_origin()
+def get_topics():
+    query = request.args["brand"]
+    table_name = "topics_" + query.lower()
+
+    response = read_write_db.get_all_data(TableName=table_name)
+    print(response)
+    return jsonify(response)
+
+
 @app.route('/add_topics', methods=['POST', 'GET'])
 @cross_origin()
 def add_topic():
     req = request.get_json()
+    query = request.args["brand"]
+    table_name = "topics_" + query.lower()
 
     logger.info("=" * 80)
     print("adding topic")
-    handlers2.handle_topics(req)
+    handlers2.handle_topics(req, table_name)
 
     response = {
                 "topics": req,
@@ -450,11 +457,13 @@ def add_topic():
 @cross_origin()
 def remove_topic():
     req = request.get_json()
+    query = request.args["brand"]
+    table_name = "topics_" + query.lower()
 
     topic = req["topic"]
     print(topic)
     logger.info("=" * 80)
-    handlers2.remove_topic(topic)
+    handlers2.remove_topic(topic, table_name)
 
     response = {
                 "topic": "topic",
@@ -532,7 +541,7 @@ def get_word_cloud():
     # all_feedbacks = all_feedbacks.remove(")")
     # all_feedbacks = all_feedbacks.remove("(")
 
-    remove = ["," , ")" , "-" , "." , "’" , "(" , "to" , "the" ,"in" , "and" , "this" , "it" , "but" , "a" , "for" , "is" , "was" , "my" , "i", "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these", "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while", "of", "at", "by", "for", "with", "about", "against", "between", "into", "through", "during", "before", "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should", "now"]
+    remove = ["," , ")" , "-" , "." , "’" , "(" ,"app", "to" , "the" ,"in" , "and" , "this" , "it" , "but" , "a" , "for" , "is" , "was" , "my" , "i", "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these", "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while", "of", "at", "by", "for", "with", "about", "against", "between", "into", "through", "during", "before", "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should", "now"]
     for k, v in Counter(all_feedbacks).items():
         if k not in remove and v>1:
             response.append({"value" : k , "count" :v })
