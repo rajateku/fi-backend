@@ -669,6 +669,19 @@ def get_word_cloud():
 
 
 
+@app.route('/user', methods=['POST', 'GET'])
+@cross_origin()
+def user():
+    jwt = request.headers.get('Authorization')
+    jwt_creds = jwt_auth.read_active_jwts(jwt)
+    logger.info(jwt_creds)
+    print(jwt_creds["username"])
+    response = handlers2.get_org_details(jwt_credentials=jwt_creds)
+
+    print(response)
+    return jsonify(response)
+
+
 if __name__ == '__main__':
     # get_handles_from_company_name("deliveroo")
     app.run(host="0.0.0.0", port=8000)

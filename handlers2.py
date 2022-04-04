@@ -129,6 +129,17 @@ def remove_topic(topic, table_name):
     print("finished handle_topics")
 
 
+def get_org_details(jwt_credentials):
+    print("inside handle_topics")
+    response = ""
+    companies = read_write_db.get_all_data(TableName="company_handles")
+    for company in companies:
+        if company["company_name"] ==jwt_credentials["username"]:
+            response = company
+
+    print("finished handle_topics")
+    return response
+
 if __name__ == '__main__':
 
     company = "roundpier"
