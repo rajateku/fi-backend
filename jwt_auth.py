@@ -3,26 +3,26 @@ import read_write_db
 
 key = "secret"
 
-payload = {
-  "id": {
-    "S": "9000001"
-  },
-  "password": {
-    "S": "roundpier"
-  },
-  "username": {
-    "S": "roundpier"
-  },
-  "name": {
-    "S": "roundpier"
-  }
-}
-
-encoded = jwt.encode(payload, key, algorithm="HS256")
-print(encoded)
-decoded = jwt.decode(encoded, key, algorithms="HS256")
-
-print(decoded)
+# payload = {
+#   "id": {
+#     "S": "9000001"
+#   },
+#   "password": {
+#     "S": "roundpier"
+#   },
+#   "username": {
+#     "S": "roundpier"
+#   },
+#   "name": {
+#     "S": "roundpier"
+#   }
+# }
+#
+# encoded = jwt.encode(payload, key, algorithm="HS256")
+# print(encoded)
+# decoded = jwt.decode(encoded, key, algorithms="HS256")
+#
+# print(decoded)
 
 
 def read_active_jwts(jwt_encoded):
