@@ -579,9 +579,7 @@ from collections import Counter
 @app.route('/getWordCloud', methods=['POST', 'GET'])
 @cross_origin()
 def getWordCloud():
-    req = request.get_json()
-    # query = "Roundpier"
-    req = request.get_json()
+    
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
     logger.info(jwt_creds)
