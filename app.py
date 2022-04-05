@@ -379,6 +379,20 @@ def get_mix_graphs_data():
     print(response)
     return jsonify(response)
 
+@app.route('/getMixGraphsData', methods=['POST', 'GET'])
+@cross_origin()
+def getMixGraphsData():
+    jwt = request.headers.get('Authorization')
+    jwt_creds = jwt_auth.read_active_jwts(jwt)
+    logger.info(jwt_creds)
+    print(jwt_creds["username"])
+    query = (jwt_creds["username"])
+
+    response = bugs_detected_recommendations.handle_bugs_watch_list(company=query.lower())
+    print(response)
+    return jsonify(response)
+
+
 @app.route('/get_recommendations', methods=['POST', 'GET'])
 @cross_origin()
 def get_suggestions():
@@ -579,7 +593,7 @@ from collections import Counter
 @app.route('/getWordCloud', methods=['POST', 'GET'])
 @cross_origin()
 def getWordCloud():
-    
+
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
     logger.info(jwt_creds)
