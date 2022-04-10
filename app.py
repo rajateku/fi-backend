@@ -566,6 +566,8 @@ def login():
     req = request.get_json()
 
     response = jwt_auth.check_login(req)
+    orgdetails = handlers2.get_org_details_from_jwt(response["jwt"])
+    response["org_details"] = orgdetails
     print(response)
     return jsonify(response)
 

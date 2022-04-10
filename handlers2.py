@@ -8,6 +8,7 @@ import get_trustpilot_data_db
 import graphs
 import time
 
+import jwt_auth
 
 def scrape_all_4handles_data(company_name, playstore, appstore, twitter, trustpilot):
     print("appstore", appstore)
@@ -41,7 +42,7 @@ def handle_company_onboard(req):
     read_write_db.create_review(TableName="company_handles", item=req)
 
     scrape_all_4handles_data(company_name = company_name, playstore = playstore, appstore = appstore, twitter = twitter, trustpilot = trustpilot)
-    source_data_to_processed_table(company_name=company_name)
+    # source_data_to_processed_table(company_name=company_name)
 
 
 def get_dashboard_data(company_name):
@@ -139,6 +140,19 @@ def get_org_details(jwt_credentials):
 
     print("finished handle_topics")
     return response
+
+def get_org_details_from_jwt(jwt):
+    org_username = jwt_auth.read_active_jwts(jwt)
+    print("inside handle_topics")
+    response = ""
+    companies = read_write_db.get_all_data(TableName="company_handles")
+    for company in companies:
+        if company["company_name"] ==org_username["username"]:
+            response = company
+
+    print("finished handle_topics")
+    return response
+
 
 if __name__ == '__main__':
 
