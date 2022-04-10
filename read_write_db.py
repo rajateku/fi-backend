@@ -87,6 +87,14 @@ def get_all_data(TableName):
 
     return response['Items']
 
+def get_column(TableName, column):
+    table = dynamodb.Table(TableName)
+    response = table.scan(AttributesToGet=[column])
+
+    # response = table.scan()
+
+    return response['Items']
+
 
 if __name__ == '__main__':
     # # get_company_handles(TableName="company_handles", company_name = "dd" )

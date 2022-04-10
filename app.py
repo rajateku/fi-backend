@@ -15,6 +15,7 @@ import json
 import get_google_search_company_details
 from logging_python import logger
 import read_write_db
+import watchlist
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -691,6 +692,20 @@ def user():
     logger.info(jwt_creds)
     print(jwt_creds["username"])
     response = handlers2.get_org_details(jwt_credentials=jwt_creds)
+
+    print(response)
+    return jsonify(response)
+
+
+@app.route('/watchList', methods=['POST', 'GET'])
+@cross_origin()
+def user():
+    jwt = request.headers.get('Authorization')
+    jwt_creds = jwt_auth.read_active_jwts(jwt)
+    logger.info(jwt_creds)
+    print(jwt_creds["username"])
+    query = (jwt_creds["username"])
+    response = watchlist.handle_wathcList(company_name=query.lower())
 
     print(response)
     return jsonify(response)
