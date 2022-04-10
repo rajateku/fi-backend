@@ -699,7 +699,7 @@ def user():
 
 @app.route('/watchList', methods=['POST', 'GET'])
 @cross_origin()
-def user():
+def watchList():
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
     logger.info(jwt_creds)
