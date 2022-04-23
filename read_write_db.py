@@ -102,8 +102,12 @@ if __name__ == '__main__':
 #     # # print(items)
 #     # for item in items:
 #     #     print(item)
-    companies = ["NHS", "Roundpier","Thursday",  "Transferwise", "Monzo", "Lyft", "Slack", "Dropbox", "Walmart", "Mediumcorporation"  ]
-    # companies = [ "Mediumcorporation"  ]
-    for c in companies:
-
-        create_table(TableName= "topics_" + c.lower() , key="topic")
+#     companies = ["NHS", "Roundpier","Thursday",  "Transferwise", "Monzo", "Lyft", "Slack", "Dropbox", "Walmart", "Mediumcorporation"  ]
+#     # companies = [ "Mediumcorporation"  ]
+#     for c in companies:
+#
+#         create_table(TableName= "topics_" + c.lower() , key="topic")
+#     create_table(TableName="orgIds", key="username" )
+#     k = get_all_data(TableName="orgIds")
+#     print(k)
+    create_table(TableName="company_handles", key = "company_name")

@@ -143,7 +143,7 @@ def get_org_details(jwt_credentials):
 
 def get_org_details_from_jwt(jwt):
     org_username = jwt_auth.read_active_jwts(jwt)
-    print("inside handle_topics")
+    print("inside company_handles")
     response = ""
     companies = read_write_db.get_all_data(TableName="company_handles")
     for company in companies:

@@ -13,7 +13,6 @@ from get_meta_data import get_playstore_meta_data
 import pandas as pd
 import json
 import get_google_search_company_details
-from logging_python import logger
 import read_write_db
 import watchlist
 
@@ -29,7 +28,6 @@ def get_handles_from_company_name(company_lower_case):
     company_lower_case = company_lower_case.lower()
 
     if company_lower_case in list(df["Company_lower_case"]):
-        logger.info("Name exists in companies handles")
         print("Name in companies handles")
         row = df.loc[df["Company_lower_case"] == company_lower_case]
         playstore_query = row["Playstore"].values[0]
@@ -38,7 +36,7 @@ def get_handles_from_company_name(company_lower_case):
         twitter_query = str(row["Twitter"].values[0])
         trustpilot_query = str(row["Trustpilot"].values[0])
         logo = str(row["logo_link"].values[0])
-        logger.info(playstore_query + appstore_query + twitter_query + logo)
+        print(playstore_query + appstore_query + twitter_query + logo)
 
         print(playstore_query, appstore_query, twitter_query,trustpilot_query, logo)
         return {
@@ -51,13 +49,13 @@ def get_handles_from_company_name(company_lower_case):
         }
 
     else:
-        logger.info("Name not in companies handles")
+        print("Name not in companies handles")
 
         print("Name not in companies handles")
 
         playstore_query, appstore_query, twitter_query,trustpilot_query, logo = get_google_search_company_details.get_company_handles_from_query(
             company_lower_case)
-        logger.info(playstore_query + appstore_query + twitter_query + trustpilot_query +logo)
+        print(playstore_query + appstore_query + twitter_query + trustpilot_query +logo)
 
 
     return playstore_query, appstore_query, twitter_query, trustpilot_query,  logo
@@ -104,7 +102,7 @@ def tweet_count_fn():
 @cross_origin()
 def test():
 
-    logger.info("server working")
+    print("server working")
 
     return "server working with git push"
 
@@ -112,7 +110,7 @@ def test():
 @app.route('/all', methods=['POST', 'GET'])
 @cross_origin()
 def hello():
-    logger.info("=" * 80)
+    print("=" * 80)
     query = request.args["brand"]
     orgId = request.get_json()
     print(orgId)
@@ -122,7 +120,7 @@ def hello():
     # sectors = request.args["sectors"]
     # filter = request.args["filter"]
     sectors = ["food", "riding", "tech", "delivery", "features"]
-    logger.info("query  :  " + str(appstore_query))
+    print("query  :  " + str(appstore_query))
 
     feedback_response, count_labels , graph_data, graph_options= handlers.handle_request(twitter_query, playstore_query, appstore_query,trustpilot_query, sectors)
     response = {"feedback": feedback_response,
@@ -138,7 +136,7 @@ def hello():
 @app.route('/all2', methods=['POST', 'GET'])
 @cross_origin()
 def all2():
-    logger.info("=" * 80)
+    print("=" * 80)
     query = request.args["brand"].lower()
 
     # jwt = request.headers.get('jwt')
@@ -167,10 +165,10 @@ def all2():
 @app.route('/dashboard', methods=['POST', 'GET'])
 @cross_origin()
 def dashboard():
-    logger.info("=" * 80)
+    print("=" * 80)
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
-    logger.info(jwt_creds)
+    print(jwt_creds)
     print(jwt_creds)
     print(jwt_creds["username"])
     query = (jwt_creds["username"])
@@ -200,14 +198,14 @@ def dashboard():
 def get_org_info():
     req = request.get_json()
     orgId = req["orgId"]
-    logger.info("=" * 80)
+    print("=" * 80)
     response = {
                 "orgId": orgId,
                 "name": "Roundpier",
                 "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyUeJ6gwm221GHEsezMN1sfx6YKxH29urVndKAwS-P9Snir2XVKCjv1O1qXtg&",
                 "topics" : ["topic1", "topic2"],
                 }
-    logger.info(response)
+    print(response)
     return jsonify(response)
 
 
@@ -216,7 +214,7 @@ def get_org_info():
 def get_reviews_topics():
     req = request.get_json()
     orgId = req["orgId"]
-    logger.info("=" * 80)
+    print("=" * 80)
     response = {
                 "orgId": orgId,
                 "name": "Roundpier",
@@ -224,7 +222,7 @@ def get_reviews_topics():
                 "reviews" : [{"review" : "review1","topics" : ["topic1", "topic2"], "created_at" : "2021-10-12 20:29:03"},
                              {"review" : "review2","topics" : ["topic1", "topic3"], "created_at" : "2022-10-12 20:29:03"}],
                 }
-    logger.info(response)
+    print(response)
     return jsonify(response)
 
 @app.route('/get_plot_data', methods=['POST', 'GET'])
@@ -232,7 +230,7 @@ def get_reviews_topics():
 def get_plot_data():
     req = request.get_json()
     orgId = req["orgId"]
-    logger.info("=" * 80)
+    print("=" * 80)
     graph_data =  {
         "App Issues": [
             {
@@ -309,7 +307,7 @@ def get_plot_data():
                 "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyUeJ6gwm221GHEsezMN1sfx6YKxH29urVndKAwS-P9Snir2XVKCjv1O1qXtg&",
                 "plot_data" : {"graphData" : graph_data, "graphDataOptions" : graph_data_options},
                 }
-    logger.info(response)
+    print(response)
     return jsonify(response)
 
 
@@ -329,7 +327,7 @@ def get_bugs():
 def bugs():
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
-    logger.info(jwt_creds)
+    print(jwt_creds)
     print(jwt_creds)
     print(jwt_creds["username"])
     query = (jwt_creds["username"])
@@ -343,7 +341,7 @@ def recommendations():
 
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
-    logger.info(jwt_creds)
+    print(jwt_creds)
     print(jwt_creds)
     print(jwt_creds["username"])
     query = (jwt_creds["username"])
@@ -359,7 +357,7 @@ def graphs():
 
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
-    logger.info(jwt_creds)
+    print(jwt_creds)
     print(jwt_creds)
     print(jwt_creds["username"])
     query = (jwt_creds["username"])
@@ -385,7 +383,7 @@ def get_mix_graphs_data():
 def getMixGraphsData():
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
-    logger.info(jwt_creds)
+    print(jwt_creds)
     print(jwt_creds["username"])
     query = (jwt_creds["username"])
 
@@ -428,7 +426,7 @@ def add_company_integrations():
     trustpilot = req["trustpilot"]
     req = get_handles_from_company_name(req["company_name"].lower())
     print(req)
-    logger.info("=" * 80)
+    print("=" * 80)
     handlers2.handle_company_onboard(req)
     response = {
                 "company_name": company_name,
@@ -437,7 +435,7 @@ def add_company_integrations():
                 "twitter" : twitter,
                 "trustpilot" : trustpilot,
                 }
-    logger.info(response)
+    print(response)
     return jsonify(response)
 
 @app.route('/get_topics', methods=['POST', 'GET'])
@@ -455,7 +453,7 @@ def get_topics():
 def getTopics():
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
-    logger.info(jwt_creds)
+    print(jwt_creds)
     print(jwt_creds["username"])
     query = (jwt_creds["username"])
     table_name = "topics_" + query.lower()
@@ -471,14 +469,14 @@ def add_topic():
     query = request.args["brand"]
     table_name = "topics_" + query.lower()
 
-    logger.info("=" * 80)
+    print("=" * 80)
     print("adding topic")
     handlers2.handle_topics(req, table_name)
 
     response = {
                 "topics": req,
                 }
-    logger.info(response)
+    print(response)
     return jsonify(response)
 
 
@@ -488,20 +486,20 @@ def addTopic():
     req = request.get_json()
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
-    logger.info(jwt_creds)
+    print(jwt_creds)
     print(jwt_creds["username"])
     query = (jwt_creds["username"])
     table_name = "topics_" + query.lower()
     table_name = "topics_" + query.lower()
 
-    logger.info("=" * 80)
+    print("=" * 80)
     print("adding topic")
     handlers2.handle_topics(req, table_name)
 
     response = {
                 "topics": req,
                 }
-    logger.info(response)
+    print(response)
     return jsonify(response)
 
 @app.route('/remove_topic', methods=['POST', 'GET'])
@@ -513,7 +511,7 @@ def remove_topic():
 
     topic = req["topic"]
     print(topic)
-    logger.info("=" * 80)
+    print("=" * 80)
     handlers2.remove_topic(topic, table_name)
 
     response = {
@@ -521,7 +519,7 @@ def remove_topic():
                 }
 
 
-    logger.info(response)
+    print(response)
     return jsonify(response)
 
 @app.route('/removeTopic', methods=['POST', 'GET'])
@@ -530,14 +528,14 @@ def removeTopic():
     req = request.get_json()
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
-    logger.info(jwt_creds)
+    print(jwt_creds)
     print(jwt_creds["username"])
     query = (jwt_creds["username"])
     table_name = "topics_" + query.lower()
 
     topic = req["topic"]
     print(topic)
-    logger.info("=" * 80)
+    print("=" * 80)
     handlers2.remove_topic(topic, table_name)
 
     response = {
@@ -545,7 +543,7 @@ def removeTopic():
                 }
 
 
-    logger.info(response)
+    print(response)
     return jsonify(response)
 
 
@@ -599,7 +597,7 @@ def getWordCloud():
 
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
-    logger.info(jwt_creds)
+    print(jwt_creds)
     print(jwt_creds["username"])
     query = (jwt_creds["username"])
     feedback_response, labels_sources, graph_data, graph_options = handlers2.get_dashboard_data(query)
@@ -689,7 +687,7 @@ def get_word_cloud():
 def user():
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
-    logger.info(jwt_creds)
+    print(jwt_creds)
     print(jwt_creds["username"])
     response = handlers2.get_org_details(jwt_credentials=jwt_creds)
 
@@ -702,9 +700,21 @@ def user():
 def watchList():
     jwt = request.headers.get('Authorization')
     jwt_creds = jwt_auth.read_active_jwts(jwt)
-    logger.info(jwt_creds)
+    print(jwt_creds)
     print(jwt_creds["username"])
     query = (jwt_creds["username"])
+    response = watchlist.handle_wathcList(company_name=query.lower())
+
+    print(response)
+    return jsonify(response)
+
+
+@app.route('/watch_list', methods=['POST', 'GET'])
+@cross_origin()
+def watch_list():
+    print("in watch list")
+    query = request.args["brand"].lower()
+    print(query)
     response = watchlist.handle_wathcList(company_name=query.lower())
 
     print(response)

@@ -113,6 +113,36 @@ def handle_issues_line(company):
     return response
 
 
+def handle_bugs_trend(company):
+    response = read_write_db.get_all_data("processed_" + company)
+    pdata = []
+    graph_options = []
+    month_based = {}
+    monthly_issues = []
+
+    for review in response:
+        if review["highlightText"] == "":
+            pass
+        else:
+            month = review["created_at"][:7]
+            label = review["labels"][0]
+            month_based.setdefault(month, []).append(label)
+            monthly_issues.append(month)
+
+    # print("month_based")
+
+    graph_labels = sorted(list(month_based.keys()))
+    # print(graph_labels)
+    values = (dict(Counter(monthly_issues)))
+    datasets = []
+    for label in graph_labels:
+        datasets.append(values[label])
+    # print(datasets)
+    response = {"labels": graph_labels, "datasets": datasets}
+    print(response)
+
+    return response
+
 
 def feedback_trend(company):
     response = read_write_db.get_all_data("processed_" + company )
@@ -145,12 +175,14 @@ def feedback_trend(company):
 def handle_wathcList(company_name):
     response_source_doughtnut = handle_source_doughnut(company_name)
     response_issues_line = handle_issues_line(company_name)
+    response_issues_line2 = handle_bugs_trend(company_name)
+
 
     response_feedback_trend = feedback_trend(company_name)
     response_bugs_source_doughnut = handle_bugs_source_doughnut(company_name)
 
     return {"source_doughnut": response_source_doughtnut , "bugs_by_source_doughnut" : response_bugs_source_doughnut,
-            "issues_topic_wise" : response_issues_line, "feedback_trend" : response_feedback_trend }
+            "issues_topic_wise" : response_issues_line, "issues_topic_wise2" : response_issues_line2,  "feedback_trend" : response_feedback_trend }
 
 
 if __name__ == '__main__':

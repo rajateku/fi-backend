@@ -1,4 +1,4 @@
-import download_save_tweets_data
+# import download_save_tweets_data
 import download_save_playstore_data
 import download_save_appstore_data
 
