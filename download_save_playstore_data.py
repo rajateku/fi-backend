@@ -64,6 +64,21 @@ import read_write_db
 #         title = get_title_of_app(competitor)
 #         print(title)
 
+def test_scrape(query):
+    print("Scraping google reviews")
+    logger.info("Scraping google reviews")
+    logger.info(query)
+    uk_reviews = reviews(
+        query,
+        # sleep_milliseconds=0,  # defaults to 0
+        lang='en',  # defaults to 'en'
+        country='uk',  # defaults to 'us'
+        sort=Sort.NEWEST,  # defaults to Sort.MOST_RELEVANT
+        count=10
+    )
+    print(len(uk_reviews[0]))
+    return uk_reviews
+
 def scrape(query, table_name):
     print("Scraping google reviews")
     logger.info("Scraping google reviews")
@@ -74,7 +89,7 @@ def scrape(query, table_name):
         lang='en',  # defaults to 'en'
         country='uk',  # defaults to 'us'
         sort=Sort.NEWEST,  # defaults to Sort.MOST_RELEVANT
-        count=100
+        count=10
     )
     print(len(uk_reviews[0]))
     for review in uk_reviews[0]:

@@ -46,8 +46,8 @@ def scrape(query, table_name):
     print("Scraping appstore reviews")
     appstore_response = AppStore(country='us', app_name=app_name, app_id=id)
 
-    appstore_response.review(how_many=100, after=datetime.datetime(2022, 1, 1))
-    # appstore_response.review(how_many=1000)
+    # appstore_response.review(how_many=100, after=datetime.datetime(2022, 1, 1))
+    appstore_response.review(how_many=10)
 
     app_reviews = appstore_response.reviews
     for review in app_reviews:

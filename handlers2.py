@@ -7,27 +7,38 @@ import get_appstore_data_db
 import get_trustpilot_data_db
 import graphs
 import time
-
+from process_bugs_recos import handler_src_prc
 import jwt_auth
+import subprocess
+
+
+def test_handlers():
+    print("server working")
+    return "server working with git push"
+
 
 def scrape_all_4handles_data(company_name, playstore, appstore, twitter, trustpilot):
     print("appstore", appstore)
 
     TableNamePlayStore = "playstore_" + company_name.lower()
     TableNameAppStore = "appstore_" + company_name.lower()
-    TableNameTrustpilot = "trustpilot_" + company_name.lower()
+    # TableNameTrustpilot = "trustpilot_" + company_name.lower()
     TableNameTopics = "topics_" + company_name.lower()
 
 
     read_write_db.create_table(TableName=TableNamePlayStore, key="reviewId")
     read_write_db.create_table(TableName=TableNameAppStore, key="date")
-    read_write_db.create_table(TableName=TableNameTrustpilot, key="created_at")
+    # read_write_db.create_table(TableName=TableNameTrustpilot, key="created_at")
     read_write_db.create_table(TableName=TableNameTopics, key="topic")
 
     time.sleep(10)
     download_save_playstore_data.scrape(query=playstore, table_name= TableNamePlayStore)
     download_save_appstore_data.scrape(query=appstore, table_name= TableNameAppStore)
-    download_save_trustpilot_db.scrape(query=trustpilot, table_name= TableNameTrustpilot)
+
+    # download_save_trustpilot_db.scrape(query=trustpilot, table_name= TableNameTrustpilot)
+
+def handle_process_data(company_name):
+    handler_src_prc.source_data_to_processed_table(company_name)
 
 
 def handle_company_onboard(req):
@@ -43,6 +54,10 @@ def handle_company_onboard(req):
 
     scrape_all_4handles_data(company_name = company_name, playstore = playstore, appstore = appstore, twitter = twitter, trustpilot = trustpilot)
     # source_data_to_processed_table(company_name=company_name)
+    # handler_src_prc.source_data_to_processed_table("roundpier")
+    handle_process_data(company_name)
+    # subprocess.run(["python", "process_bugs_recos/handler_src_prc.py" , company_name.lower()])
+
 
 
 def get_dashboard_data(company_name):
@@ -100,6 +115,7 @@ def handle_topics(req, table_name):
     read_write_db.create_table(TableName=table_name, key="topic")
     for topic in req:
         read_write_db.create_review(TableName=table_name, item=topic)
+    handle_process_data(table_name.replace("topics_", ""))
     print("finished handle_topics")
 
     # company = "roundpier"
@@ -157,11 +173,15 @@ def get_org_details_from_jwt(jwt):
 if __name__ == '__main__':
 
     company = "roundpier"
+    #
+    #
+    # # companies = [ "nhs" , "lyft" , "monzo" ,]
+    # companies = [ "nhs" , "lyft" , "monzo" , "roundpier" ,  "transferwise" , "walmart" , "slack" , "dropbox" , "mediumcorporation" ]
+    #
+    # # for company in companies:
+    # #     # source_data_to_processed_table(company)
+    #     # get_dashboard_data(company)
+    handle_process_data(company)
 
+    # subprocess.run(["python", "process_bugs_recos/handler_src_prc.py" , company])
 
-    # companies = [ "nhs" , "lyft" , "monzo" ,]
-    companies = [ "nhs" , "lyft" , "monzo" , "roundpier" ,  "transferwise" , "walmart" , "slack" , "dropbox" , "mediumcorporation" ]
-
-    for company in companies:
-        source_data_to_processed_table(company)
-        # get_dashboard_data(company)

@@ -49,16 +49,17 @@ def get_handles_from_company_name(company_lower_case):
         }
 
     else:
-        print("Name not in companies handles")
+        return 0
+        # print("Name not in companies handles")
+        #
+        # print("Name not in companies handles")
+        #
+        # playstore_query, appstore_query, twitter_query,trustpilot_query, logo = get_google_search_company_details.get_company_handles_from_query(
+        #     company_lower_case)
+        # print(playstore_query + appstore_query + twitter_query + trustpilot_query +logo)
 
-        print("Name not in companies handles")
 
-        playstore_query, appstore_query, twitter_query,trustpilot_query, logo = get_google_search_company_details.get_company_handles_from_query(
-            company_lower_case)
-        print(playstore_query + appstore_query + twitter_query + trustpilot_query +logo)
-
-
-    return playstore_query, appstore_query, twitter_query, trustpilot_query,  logo
+    # return playstore_query, appstore_query, twitter_query, trustpilot_query,  logo
 
 
 #
@@ -424,7 +425,20 @@ def add_company_integrations():
     appstore = req["appstore"]
     twitter = req["twitter"]
     trustpilot = req["trustpilot"]
-    req = get_handles_from_company_name(req["company_name"].lower())
+    logo = req["logo"]
+
+    res = get_handles_from_company_name(req["company_name"].lower())
+    if res == 0:
+        pass
+    else:
+        req = {
+                "company_name": company_name,
+                "playstore": playstore,
+                "appstore": appstore,
+                "twitter" : twitter,
+                "trustpilot" : trustpilot,
+                'logo': logo
+                }
     print(req)
     print("=" * 80)
     handlers2.handle_company_onboard(req)
@@ -434,6 +448,8 @@ def add_company_integrations():
                 "appstore": appstore,
                 "twitter" : twitter,
                 "trustpilot" : trustpilot,
+                "logo" : logo
+
                 }
     print(response)
     return jsonify(response)
@@ -604,7 +620,7 @@ def getWordCloud():
     all_feedbacks = []
     response = []
     for feed in feedback_response:
-        all_feedbacks.extend(feed["text"].lower().split(" "))
+        all_feedbacks.extend(feed["highlightText"].lower().split(" "))
     remove = ["," , ")" , "-" , "." , "’" , "(" ,"app", "to" , "the" ,"in" , "and" , "this" , "it" , "but" , "a" , "for" , "is" , "was" , "my" , "i", "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these", "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while", "of", "at", "by", "for", "with", "about", "against", "between", "into", "through", "during", "before", "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should", "now"]
     for k, v in Counter(all_feedbacks).items():
         if k not in remove and v>1:
@@ -671,7 +687,7 @@ def get_word_cloud():
     response = []
 
     for feed in feedback_response:
-        all_feedbacks.extend(feed["text"].lower().split(" "))
+        all_feedbacks.extend(feed["highlightText"].lower().split(" "))
     remove = ["," , ")" , "-" , "." , "’" , "(" ,"app", "to" , "the" ,"in" , "and" , "this" , "it" , "but" , "a" , "for" , "is" , "was" , "my" , "i", "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these", "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while", "of", "at", "by", "for", "with", "about", "against", "between", "into", "through", "during", "before", "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should", "now"]
     for k, v in Counter(all_feedbacks).items():
         if k not in remove and v>1:
@@ -723,4 +739,4 @@ def watch_list():
 
 if __name__ == '__main__':
     # get_handles_from_company_name("deliveroo")
-    app.run(host="0.0.0.0", port=8000)
+    app.run(host="0.0.0.0", port=8001)
