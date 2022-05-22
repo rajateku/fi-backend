@@ -10,3 +10,4 @@ logs
 data_jsons
 my-app
 download_save_tweets_data.py
+.DS_Store
