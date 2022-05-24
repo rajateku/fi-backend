@@ -4,6 +4,8 @@ import credentials, get_hashtag_for_search
 import pandas as pd
 import csv
 import os
+import read_write_db
+
 
 from logging_python import logger
 
@@ -20,7 +22,7 @@ LOCATION = "location"
 ID = "id"
 TEXT = "text"
 CREATED_AT = "created_at"
-TWEET_FIELDS = "tweet.fields=text,created_at,id&max_results=100&expansions=author_id&user.fields=created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld"
+TWEET_FIELDS = "tweet.fields=text,created_at,id&max_results=10&expansions=author_id&user.fields=created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld"
 
 
 def form_better_dataframes(search_tweets):
@@ -59,7 +61,7 @@ def save_file_to_local(query, search_result):
     }
 
 
-def search_and_save_twitter(query):
+def search_and_save_twitter(query, table_name):
     bearer_token = BEARER_TOKEN
     headers = {"Authorization": "Bearer {}".format(bearer_token)}
 
@@ -73,11 +75,23 @@ def search_and_save_twitter(query):
 
     if search_response.status_code != 200:
         raise Exception(search_response.status_code, search_response.text)
-    response = save_file_to_local(query, search_response)
-    return response
+
+    for tweet in search_response.json()["data"]:
+        print(tweet)
+        review = {}
+        review["title"] = tweet[TEXT]
+        review["content"] = tweet[TEXT]
+        review["created_at"] = tweet[CREATED_AT]
+        review["rating"] = ""
+        review["id"] = tweet[ID]
+        read_write_db.create_review(TableName=table_name, item=review)
+        # break
+
+    # response = save_file_to_local(query, search_response)
+    return tweet
 
 
 if __name__ == '__main__':
     query = "@Deliveroo"
     json_response = search_and_save_twitter(query=query)
-    get_hashtag_for_search.json_to_hashtags(query, json_response)
+    # get_hashtag_for_search.json_to_hashtags(query, json_response)

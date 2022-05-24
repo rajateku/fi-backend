@@ -110,4 +110,5 @@ if __name__ == '__main__':
 #     create_table(TableName="orgIds", key="username" )
 #     k = get_all_data(TableName="orgIds")
 #     print(k)
-    create_table(TableName="company_handles", key = "company_name")
+#     create_table(TableName="company_handles", key = "company_name")
+    create_table(TableName="userFootPrints", key = "ts")

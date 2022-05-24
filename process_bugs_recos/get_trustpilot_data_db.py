@@ -1,9 +1,11 @@
+from logging_python import logger
 import boto3
 import process_bugs_recos.get_labels as get_labels
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
 
-def prepare_response_object_from_appstore_files(file_data, topics):
+
+def prepare_response_object_from_trustpilot_db(file_data, topics):
     response = []
     labels = []
 
@@ -17,42 +19,41 @@ def prepare_response_object_from_appstore_files(file_data, topics):
                 "labels": "",
                 "sentiment": "",
                 "rating": "",
-                "highlightText" : "",
-                "source": "appstore"
+                "highlightText": "",
+                "source": "Trustpilot"
             }
             # REVIEW_OBJECT["id"] = str(i)
+            print("review trustpilot :" , review)
+            REVIEW_OBJECT["text"] = review["content"]
             REVIEW_OBJECT["title"] = review["title"]
-            print(review)
-            REVIEW_OBJECT["text"] = review["review"]
             REVIEW_OBJECT["location"] = ""
-            REVIEW_OBJECT["created_at"] = review["date"]
-            REVIEW_OBJECT["labels"] = get_labels.review_to_topic(str(review["review"]), topics)
-            REVIEW_OBJECT["highlightText"]= get_labels.review_to_highlight(str(review["review"]))
-            REVIEW_OBJECT["suggestionText"] = get_labels.review_to_suggestion(str(review["review"]))
-            REVIEW_OBJECT["labels"].append("App Store")
-            REVIEW_OBJECT["labels"].append( str(review["rating"]))
-            REVIEW_OBJECT["rating"] = str(review["rating"])
+            REVIEW_OBJECT["created_at"] = review["created_at"]
+            REVIEW_OBJECT["labels"] = get_labels.review_to_topic(str(review["content"]), topics)
+            REVIEW_OBJECT["highlightText"] = get_labels.review_to_highlight(str(review["content"]))
+            REVIEW_OBJECT["suggestionText"] = get_labels.review_to_suggestion(str(review["content"]))
+            REVIEW_OBJECT["labels"].append("Trustpilot")
+            REVIEW_OBJECT["labels"].append(str(review["rating"]))
+            REVIEW_OBJECT["rating"] = str(review["rating"].split(" ")[1])
             REVIEW_OBJECT["url"] = ""
 
             labels.extend(REVIEW_OBJECT["labels"])
             response.append(REVIEW_OBJECT)
-
+    # labels_strip = prepare_labels_strip_navigation(labels)
 
     return response
 
 
 def get_data_from_db_processed(TableName, topics):
 
+    logger.info("connecting to db")
     table = dynamodb.Table(TableName)
-    print("TableName : ", TableName)
     # response = table.scan(ProjectionExpression="review, rating")
     response = table.scan()
-
-    print(response['Items'])
-    resp = prepare_response_object_from_appstore_files(response['Items'], topics)
+    resp = prepare_response_object_from_trustpilot_db(response['Items'], topics)
     return resp
 
 
 if __name__ == '__main__':
-    TableName = "appstore_wise"
+    TableName = "trustpilot_deliveroo"
+    topics = {}
     json_response = get_data_from_db_processed(TableName)

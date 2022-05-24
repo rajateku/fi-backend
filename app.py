@@ -429,28 +429,21 @@ def add_company_integrations():
 
     res = get_handles_from_company_name(req["company_name"].lower())
     if res == 0:
-        pass
-    else:
         req = {
-                "company_name": company_name,
-                "playstore": playstore,
-                "appstore": appstore,
-                "twitter" : twitter,
-                "trustpilot" : trustpilot,
-                'logo': logo
-                }
+            "company_name": company_name,
+            "playstore": playstore,
+            "appstore": appstore,
+            "twitter": twitter,
+            "trustpilot": trustpilot,
+            "logo": logo
+
+        }
+    else:
+        req = res
     print(req)
     print("=" * 80)
     handlers2.handle_company_onboard(req)
-    response = {
-                "company_name": company_name,
-                "playstore": playstore,
-                "appstore": appstore,
-                "twitter" : twitter,
-                "trustpilot" : trustpilot,
-                "logo" : logo
-
-                }
+    response = req
     print(response)
     return jsonify(response)
 

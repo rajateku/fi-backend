@@ -2,6 +2,8 @@ import read_write_db
 import download_save_appstore_data
 import download_save_playstore_data
 import download_save_trustpilot_db
+import download_save_tweets_data
+
 import get_playstore_data_db
 import get_appstore_data_db
 import get_trustpilot_data_db
@@ -22,20 +24,44 @@ def scrape_all_4handles_data(company_name, playstore, appstore, twitter, trustpi
 
     TableNamePlayStore = "playstore_" + company_name.lower()
     TableNameAppStore = "appstore_" + company_name.lower()
-    # TableNameTrustpilot = "trustpilot_" + company_name.lower()
+
+    if twitter=="-" or twitter=="" or twitter==" ":
+        print("passing twitter")
+        pass
+    else:
+        TableNameTwitter = "twitter_" + company_name.lower()
+        read_write_db.create_table(TableName=TableNameTwitter, key="id")
+
     TableNameTopics = "topics_" + company_name.lower()
 
+    if trustpilot=="-" or trustpilot=="" or trustpilot==" ":
+        print("passing trustiplot")
+        pass
+    else:
+        TableNameTrustpilot = "trustpilot_" + company_name.lower()
+        read_write_db.create_table(TableName=TableNameTrustpilot, key="created_at")
 
     read_write_db.create_table(TableName=TableNamePlayStore, key="reviewId")
     read_write_db.create_table(TableName=TableNameAppStore, key="date")
-    # read_write_db.create_table(TableName=TableNameTrustpilot, key="created_at")
     read_write_db.create_table(TableName=TableNameTopics, key="topic")
 
     time.sleep(10)
     download_save_playstore_data.scrape(query=playstore, table_name= TableNamePlayStore)
     download_save_appstore_data.scrape(query=appstore, table_name= TableNameAppStore)
 
-    # download_save_trustpilot_db.scrape(query=trustpilot, table_name= TableNameTrustpilot)
+
+    if twitter=="-" or twitter=="" or twitter==" ":
+        print("inside twitter download pass")
+        pass
+    else:
+        download_save_tweets_data.search_and_save_twitter(twitter, table_name=TableNameTwitter)
+
+    if trustpilot=="-" or trustpilot=="" or trustpilot==" ":
+        print("inside trustpilot pass download")
+        pass
+    else:
+        download_save_trustpilot_db.scrape(trustpilot, table_name=TableNameTrustpilot)
+
 
 def handle_process_data(company_name):
     handler_src_prc.source_data_to_processed_table(company_name)
@@ -67,7 +93,7 @@ def get_dashboard_data(company_name):
     feedback_response = sorted(feedback_response, key=lambda k: k.get('created_at', 0), reverse=True)
 
     graph_data, graph_options = graphs.get_graph_data_from_response(feedback_response)
-    labels_sources = [ "Twitter" , "App Store" , "Play Store"]
+    labels_sources = [ "Twitter" , "App Store" , "Play Store", "Trustpilot"]
     topic_labels_dashboard = read_write_db.get_all_data(TableName="topics_" + company_name.lower())
     labels_sources =  labels_sources + [a ["topic"] for a in topic_labels_dashboard]
 
