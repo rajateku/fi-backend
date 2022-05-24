@@ -22,7 +22,7 @@ def prepare_response_object_from_appstore_files(file_data, topics):
             }
             # REVIEW_OBJECT["id"] = str(i)
             REVIEW_OBJECT["title"] = review["title"]
-            print(review)
+            # print(review)
             REVIEW_OBJECT["text"] = review["review"]
             REVIEW_OBJECT["location"] = ""
             REVIEW_OBJECT["created_at"] = review["date"]
@@ -48,7 +48,7 @@ def get_data_from_db_processed(TableName, topics):
     # response = table.scan(ProjectionExpression="review, rating")
     response = table.scan()
 
-    print(response['Items'])
+    # print(response['Items'])
     resp = prepare_response_object_from_appstore_files(response['Items'], topics)
     return resp
 

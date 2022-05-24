@@ -23,7 +23,7 @@ def prepare_response_object_from_trustpilot_db(file_data, topics):
                 "source": "Trustpilot"
             }
             # REVIEW_OBJECT["id"] = str(i)
-            print("review trustpilot :" , review)
+            # print("review trustpilot :" , review)
             REVIEW_OBJECT["text"] = review["content"]
             REVIEW_OBJECT["title"] = review["title"]
             REVIEW_OBJECT["location"] = ""

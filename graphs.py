@@ -104,5 +104,5 @@ if __name__ == '__main__':
     graph_options = []
     for k in gd:
         graph_options.append({"name" : k})
-        print(graph_options)
-        print({"name" : k})
+        # print(graph_options)
+        # print({"name" : k})

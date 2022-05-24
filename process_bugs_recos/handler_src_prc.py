@@ -38,7 +38,7 @@ def source_data_to_processed_table(company_name):
     if read_write_db.check_if_table_exists(TableNamePlayStore):
         playstore_reponse = get_playstore_data_db.get_data_from_db_processed(
             TableName=TableNamePlayStore, topics=topics)
-        print((playstore_reponse))
+        # print((playstore_reponse))
         for review in playstore_reponse:
             read_write_db.create_review(TableName= processedTableName, item=review)
 
